@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">KravTrainer</string>
+    <string name="button_start">Start</string>
+    <string name="button_stop">Stop</string>
+    <string name="ready">Ready</string>
+    <string name="gloves_connected">Connected</string>
+    <string name="gloves_disconnected">Disconnected</string>
+</resources>
