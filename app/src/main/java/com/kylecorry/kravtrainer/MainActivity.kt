@@ -1,95 +1,109 @@
 package com.kylecorry.kravtrainer
-
+import android.Manifest
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.speech.tts.TextToSpeech
-import android.view.View
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.TextView
-import kotlin.math.roundToInt
-import kotlin.random.Random
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var currentComboTxt: TextView
-    private lateinit var connectedText: TextView
-    private lateinit var comboProgressBar: ProgressBar
-    private lateinit var startBtn: Button
+    // CONFIGURATION
+    private val fragmentMap: Map<Int, Fragment> = mapOf(
+        Pair(R.id.action_training, TrainingSelectFragment()),
+        Pair(R.id.action_stats, StatsFragment())
+    )
 
-    private lateinit var comboTracker: PunchComboTracker
-    private lateinit var tts: TextToSpeech
+    private val defaultFragmentId = R.id.action_training
 
-    private var started: Boolean = false
+    private val permissions = listOf(Manifest.permission.BLUETOOTH)
+
+    // END CONFIGURATION
+
+    private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        currentComboTxt = findViewById(R.id.current_combo)
-        connectedText = findViewById(R.id.connection_status)
-        startBtn = findViewById(R.id.start_button)
-        comboProgressBar = findViewById(R.id.combo_progress)
+        if (!hasPermissions()){
+            getPermission()
+        }
 
-        resetUI()
+        bottomNavigation = findViewById(R.id.bottom_navigation)
 
-        tts = TextToSpeech(this, this)
+        syncFragmentWithSelection(bottomNavigation.selectedItemId)
+
+        bottomNavigation.setOnNavigationItemSelectedListener { item ->
+            syncFragmentWithSelection(item.itemId)
+            true
+        }
+
     }
 
-    private fun onPunch(punch: Punch){
-        if (!started) return
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        bottomNavigation.selectedItemId = savedInstanceState.getInt("page", defaultFragmentId)
+    }
 
-        if (comboTracker.matches(punch)){
-            // TODO: Correct ding
-            comboTracker.next()
-            comboProgressBar.progress = (comboTracker.progress * 100).roundToInt()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("page", bottomNavigation.selectedItemId)
+    }
+
+    private fun syncFragmentWithSelection(selection: Int){
+        switchFragment(fragmentMap[selection] ?: fragmentMap[defaultFragmentId])
+    }
+
+    private fun switchFragment(fragment: Fragment?){
+        if (fragment == null) return
+        supportFragmentManager.doTransaction {
+            this.replace(R.id.fragment_holder, fragment)
+        }
+    }
+
+    override fun onBackPressed() {
+        val count = supportFragmentManager.backStackEntryCount
+
+        if (count == 0) {
+            super.onBackPressed()
+            //additional code
         } else {
-            // TODO: Incorrect ding
-        }
-
-        if (comboTracker.isDone){
-            nextCombo()
+            supportFragmentManager.popBackStack()
         }
     }
 
-    private fun nextCombo(){
-        val combo = getNextCombo()
-        comboTracker = PunchComboTracker(combo)
-        announceNewCombo()
-    }
-
-    private fun getNextCombo(): PunchCombo {
-        val idx = Random.nextInt(PunchCombos.combos.size)
-        return PunchCombos.combos[idx]
-    }
-
-    private fun announceNewCombo(){
-        tts.speak(comboTracker.combo.name, TextToSpeech.QUEUE_FLUSH, null)
-        currentComboTxt.text = comboTracker.combo.name
-        comboProgressBar.progress = 0
-        comboProgressBar.visibility = View.VISIBLE
-    }
-
-    private fun resetUI(){
-        startBtn.text = getString(R.string.button_start)
-        currentComboTxt.text = getString(R.string.ready)
-        comboProgressBar.progress = 0
-        comboProgressBar.visibility = View.INVISIBLE
-    }
-
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS){
-            connectedText.text = getString(R.string.gloves_connected)
-            startBtn.setOnClickListener {
-                if (!started) {
-                    started = true
-                    nextCombo()
-                    startBtn.text = getString(R.string.button_stop)
-                } else {
-                    started = false
-                    resetUI()
-                }
-            }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        val granted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
+        if (granted){
+            // Do nothing yet
+        } else {
+            Toast.makeText(this, "Not all permissions were granted, some features may be broken", Toast.LENGTH_LONG).show()
         }
     }
+
+    private fun hasPermissions(): Boolean {
+        return true
+//        for (permission in permissions){
+//            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED){
+//                return false
+//            }
+//        }
+//
+//        return true
+    }
+
+    private fun getPermission(){
+        ActivityCompat.requestPermissions(this,
+            permissions.toTypedArray(),
+            1
+        )
+    }
+
 }

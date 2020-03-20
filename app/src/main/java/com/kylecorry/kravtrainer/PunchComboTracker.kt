@@ -3,8 +3,8 @@ package com.kylecorry.kravtrainer
 class PunchComboTracker(val combo: PunchCombo){
     private var currentIdx: Int = 0
 
-    val progress: Float
-        get() = currentIdx / combo.punches.size.toFloat()
+    val index: Int
+        get() = currentIdx
 
     val isDone: Boolean
         get() = currentIdx >= combo.punches.size
