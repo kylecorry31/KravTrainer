@@ -1,14 +1,12 @@
-package com.kylecorry.kravtrainer
+package com.kylecorry.kravtrainer.domain.models
 
 data class Punch(val hand: Hand, val punchType: PunchType){
     companion object {
-        @JvmStatic
-        fun Left(punchType: PunchType): Punch {
+        fun left(punchType: PunchType): Punch {
             return Punch(Hand.Left, punchType)
         }
 
-        @JvmStatic
-        fun Right(punchType: PunchType): Punch {
+        fun right(punchType: PunchType): Punch {
             return Punch(Hand.Right, punchType)
         }
     }

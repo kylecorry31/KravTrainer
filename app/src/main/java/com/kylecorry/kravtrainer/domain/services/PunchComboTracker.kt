@@ -1,10 +1,21 @@
-package com.kylecorry.kravtrainer
+package com.kylecorry.kravtrainer.domain.services
+
+import com.kylecorry.kravtrainer.domain.models.Punch
+import com.kylecorry.kravtrainer.domain.models.PunchCombo
 
 class PunchComboTracker(val combo: PunchCombo){
     private var currentIdx: Int = 0
 
     val index: Int
         get() = currentIdx
+
+    val currentPunch: Punch?
+        get(){
+            if (isDone){
+                return null
+            }
+            return combo.punches[currentIdx]
+        }
 
     val isDone: Boolean
         get() = currentIdx >= combo.punches.size

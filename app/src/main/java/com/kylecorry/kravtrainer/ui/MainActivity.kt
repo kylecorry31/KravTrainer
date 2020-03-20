@@ -1,4 +1,4 @@
-package com.kylecorry.kravtrainer
+package com.kylecorry.kravtrainer.ui
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
@@ -7,16 +7,26 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.kylecorry.kravtrainer.R
+import com.kylecorry.kravtrainer.doTransaction
+import com.kylecorry.kravtrainer.infrastructure.PunchGestureRepo
 
 class MainActivity : AppCompatActivity() {
 
     // CONFIGURATION
     private val fragmentMap: Map<Int, Fragment> = mapOf(
-        Pair(R.id.action_training, TrainingSelectFragment()),
-        Pair(R.id.action_stats, StatsFragment())
+        Pair(
+            R.id.action_training,
+            TrainingSelectFragment()
+        ),
+        Pair(
+            R.id.action_stats,
+            StatsFragment()
+        )
     )
 
-    private val defaultFragmentId = R.id.action_training
+    private val defaultFragmentId =
+        R.id.action_training
 
     private val permissions = listOf(Manifest.permission.BLUETOOTH)
 
@@ -31,6 +41,8 @@ class MainActivity : AppCompatActivity() {
         if (!hasPermissions()){
             getPermission()
         }
+
+        PunchGestureRepo.load()
 
         bottomNavigation = findViewById(R.id.bottom_navigation)
 
@@ -89,14 +101,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hasPermissions(): Boolean {
+        for (permission in permissions){
+            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED){
+                return false
+            }
+        }
+
         return true
-//        for (permission in permissions){
-//            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED){
-//                return false
-//            }
-//        }
-//
-//        return true
     }
 
     private fun getPermission(){

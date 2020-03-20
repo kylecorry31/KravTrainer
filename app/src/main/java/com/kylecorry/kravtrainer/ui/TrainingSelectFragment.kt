@@ -1,4 +1,4 @@
-package com.kylecorry.kravtrainer
+package com.kylecorry.kravtrainer.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.kylecorry.kravtrainer.R
+import com.kylecorry.kravtrainer.doTransaction
 
 class TrainingSelectFragment : Fragment() {
 
@@ -20,11 +22,11 @@ class TrainingSelectFragment : Fragment() {
         unlimitedBtn = view.findViewById(R.id.button_unlimited)
 
         twoMinBtn.setOnClickListener {
-            startTraining(1000 * 60 * 2)
+            startTraining(60 * 2)
         }
 
         fourMinBtn.setOnClickListener {
-            startTraining(1000 * 60 * 4)
+            startTraining(60 * 4)
         }
 
         unlimitedBtn.setOnClickListener {
@@ -33,9 +35,10 @@ class TrainingSelectFragment : Fragment() {
         return view
     }
 
-    private fun startTraining(time: Long?){
+    private fun startTraining(time: Int?){
         fragmentManager?.doTransaction {
-            this.replace(R.id.fragment_holder,
+            this.replace(
+                R.id.fragment_holder,
                 TrainingFragment(time)
             )
         }
