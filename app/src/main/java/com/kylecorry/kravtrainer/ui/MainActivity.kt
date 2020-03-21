@@ -42,8 +42,6 @@ class MainActivity : AppCompatActivity() {
             getPermission()
         }
 
-        PunchGestureRepo.load()
-
         bottomNavigation = findViewById(R.id.bottom_navigation)
 
         syncFragmentWithSelection(bottomNavigation.selectedItemId)
