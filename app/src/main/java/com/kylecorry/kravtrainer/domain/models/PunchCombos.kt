@@ -18,7 +18,7 @@ object PunchCombos {
             listOf(
                 Punch.left(PunchType.Straight),
                 Punch.right(PunchType.Straight),
-                Punch.left(PunchType.Straight) // Hook
+                Punch.left(PunchType.Hook)
             )
         ),
         PunchCombo(
@@ -26,7 +26,7 @@ object PunchCombos {
             listOf(
                 Punch.left(PunchType.Straight),
                 Punch.right(PunchType.Straight),
-                Punch.left(PunchType.Straight), // Hook
+                Punch.left(PunchType.Hook),
                 Punch.right(PunchType.Straight)
             )
         ),
@@ -35,8 +35,8 @@ object PunchCombos {
             listOf(
                 Punch.left(PunchType.Straight),
                 Punch.right(PunchType.Straight),
-                Punch.left(PunchType.Straight), // Liver
-                Punch.left(PunchType.Straight), // Hook
+                Punch.left(PunchType.Hook), // Liver
+                Punch.left(PunchType.Hook),
                 Punch.right(PunchType.Straight)
             )
         ),

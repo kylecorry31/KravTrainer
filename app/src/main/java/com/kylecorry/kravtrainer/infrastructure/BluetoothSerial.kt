@@ -4,12 +4,7 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
-import java.lang.StringBuilder
-import java.nio.charset.Charset
+import java.io.*
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -96,30 +91,25 @@ class BluetoothSerial(private val address: String) {
 
     private fun startInputListener(){
         thread {
-            val stringBuilder = StringBuilder()
+
+            val inputStream = input!!
+            val handler = Handler(Looper.getMainLooper())
+
+            val reader = BufferedReader(InputStreamReader(inputStream))
 
             while (socket?.isConnected == true){
-                try {
-
-                    val bytes = input?.available()
-                    if (bytes != 0){
-                        val b = input?.read()
-
-                        if (b == 10){
-                            val data = stringBuilder.toString()
-                            Handler(Looper.getMainLooper()).post {
-                                listeners.forEach { it.onData(data) }
-                            }
-                            stringBuilder.clear()
-                        } else {
-                            stringBuilder.append(b?.toChar())
-                        }
+                synchronized(inputStream){
+                    try {
+                        val recv = reader.readLine()
+                        handler.post { listeners.forEach { it.onData(recv) } }
+                    } catch (e: Exception){
+                        e.printStackTrace()
                     }
-
-                } catch (e: IOException){
-                    e.printStackTrace()
                 }
             }
+
+            handler.post { listeners.forEach { it.onDisconnect() }}
+
         }
     }
 

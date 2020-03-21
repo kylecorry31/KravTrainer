@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KravTrainer</string>
+    <string name="app_name">Shadow Boxer</string>
     <string name="button_start">Start</string>
     <string name="button_stop">Stop</string>
     <string name="ready">Ready</string>

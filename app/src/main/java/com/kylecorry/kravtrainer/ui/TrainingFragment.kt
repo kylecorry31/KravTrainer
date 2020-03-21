@@ -1,6 +1,9 @@
 package com.kylecorry.kravtrainer.ui
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
@@ -10,17 +13,16 @@ import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.kylecorry.kravtrainer.R
 import com.kylecorry.kravtrainer.doTransaction
-import com.kylecorry.kravtrainer.domain.models.Punch
-import com.kylecorry.kravtrainer.domain.models.PunchCombo
-import com.kylecorry.kravtrainer.domain.models.PunchCombos
-import com.kylecorry.kravtrainer.domain.models.PunchType
-import com.kylecorry.kravtrainer.domain.services.PunchComboTracker
+import com.kylecorry.kravtrainer.domain.models.*
 import com.kylecorry.kravtrainer.domain.services.PunchClassifier
+import com.kylecorry.kravtrainer.domain.services.PunchComboTracker
 import com.kylecorry.kravtrainer.domain.services.PunchStatAggregator
 import com.kylecorry.kravtrainer.infrastructure.BluetoothGloves
 import com.kylecorry.kravtrainer.infrastructure.TrainingTimer
 import java.util.*
+import kotlin.concurrent.timer
 import kotlin.random.Random
+
 
 class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInitListener, Observer {
 
@@ -41,6 +43,10 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
 
     private var lastLeftPunch: PunchType? = null
     private var lastRightPunch: PunchType? = null
+
+    private var mediaPlayer: MediaPlayer? = null
+
+    private lateinit var handler: Handler
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_training, container, false)
@@ -84,6 +90,8 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
 
         gloves.addObserver(this)
         timer?.addObserver(this)
+
+        handler = Handler(Looper.getMainLooper())
     }
 
     override fun onPause() {
@@ -98,22 +106,32 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
         }
         tts.shutdown()
         gloves.stop()
+
+        mediaPlayer?.release()
+
     }
 
     private fun onPunch(punch: Punch){
 
+        println(punch)
+
         if (comboTracker.matches(punch)){
             punchStatAggregator.correct(punch)
-            // TODO: Correct ding
+            playSound(R.raw.success)
             comboTracker.next()
             updateComboProgress()
         } else {
             punchStatAggregator.incorrect(punch)
-            // TODO: Incorrect ding
+            playSound(R.raw.fail)
         }
 
         if (comboTracker.isDone){
-            nextCombo()
+            timer(period = 1000){
+                handler.post {
+                    nextCombo()
+                }
+                cancel()
+            }
         }
     }
 
@@ -154,6 +172,12 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
         currentMoveTxt.text = "${currentMove?.hand} ${currentMove?.punchType}"
     }
 
+    private fun playSound(id: Int){
+        mediaPlayer = MediaPlayer.create(context, id)
+        mediaPlayer?.setVolume(0.1f, 0.1f)
+        mediaPlayer?.start()
+    }
+
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS){
             nextCombo()
@@ -163,9 +187,11 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
     fun onGlovesUpdate(){
         if (!gloves.isConnected){
             // TODO: Alert user
-            returnToTrainingSelect()
+            Toast.makeText(context, "Gloves disconnected", Toast.LENGTH_LONG).show()
             return
         }
+
+        // TODO: Set connection indicator
 
         val leftPunchType = leftPunchClassifier.classify(gloves.left)
         val rightPunchType = rightPunchClassifier.classify(gloves.right)

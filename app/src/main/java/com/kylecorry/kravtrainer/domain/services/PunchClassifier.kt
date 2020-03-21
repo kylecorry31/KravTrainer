@@ -8,22 +8,40 @@ import kotlin.math.min
 
 class PunchClassifier {
 
+    private var lastReading = 0L
+
     private val detectionThreshold: Float = 10f
 
     private val readings = mutableListOf<Acceleration>()
 
     fun classify(reading: Acceleration): PunchType? {
 
-        readings.add(reading)
+//        readings.add(reading)
+//
+//        if (readings.size > Constants.PUNCH_WINDOW_LENGTH){
+//            readings.removeAt(0)
+//        }
+//
+//        for(punch in PunchGestureRepo.punches){
+//            if (dtw(punch.value, readings) <= detectionThreshold){
+//                return punch.key
+//            }
+//        }
 
-        if (readings.size > Constants.PUNCH_WINDOW_LENGTH){
-            readings.removeAt(0)
+        val currentTime = System.currentTimeMillis()
+
+        if (currentTime - lastReading < 200L){
+            return null
         }
 
-        for(punch in PunchGestureRepo.punches){
-            if (dtw(punch.value, readings) <= detectionThreshold){
-                return punch.key
-            }
+        if (reading.z < -45){
+            lastReading = currentTime
+            return PunchType.Hook
+        }
+
+        if (reading.x < -35){
+            lastReading = currentTime
+            return PunchType.Straight
         }
 
         // TODO: Return max dtw if greater than min threshold

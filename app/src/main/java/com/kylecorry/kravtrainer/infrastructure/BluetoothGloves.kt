@@ -46,13 +46,13 @@ class BluetoothGloves: Observable(), SerialListener {
     }
 
     override fun onData(data: String) {
-        println(data)
         val strValues = data.split(",")
-        val values = strValues.map { it.toFloat() }
 
-        if (values.size != 4){
+        if (strValues.size != 4 || strValues.any { it.isEmpty() }){
             return
         }
+
+        val values = strValues.map { it.toFloat() }
 
         val acceleration = Acceleration(values[1], values[2], values[3])
 
