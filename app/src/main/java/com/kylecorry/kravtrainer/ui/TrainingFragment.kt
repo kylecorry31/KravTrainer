@@ -148,6 +148,13 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
 
     private fun announceNewCombo(){
         tts.speak(comboTracker.combo.name, TextToSpeech.QUEUE_FLUSH, null)
+        if(comboTracker.combo.name.length > 10){
+            comboTxt.textSize = 36.0f
+        } else if (comboTracker.combo.name.length > 5){
+            comboTxt.textSize = 50.0f
+        } else {
+            comboTxt.textSize = 112.0f
+        }
         comboTxt.text = comboTracker.combo.name
         updateComboProgress()
     }

@@ -47,6 +47,35 @@ object PunchCombos {
             )
         ),
         PunchCombo(
+            "Double jab cross",
+            listOf(
+                Punch.left(PunchType.Straight),
+                Punch.left(PunchType.Straight),
+                Punch.right(PunchType.Straight)
+            )
+        ),
+        PunchCombo(
+            "Left hook",
+            listOf(
+                Punch.left(PunchType.Hook)
+            )
+        ),
+        PunchCombo(
+            "Right hook",
+            listOf(
+                Punch.right(PunchType.Hook)
+            )
+        ),
+        PunchCombo(
+            "4 straight",
+            listOf(
+                Punch.left(PunchType.Straight),
+                Punch.right(PunchType.Straight),
+                Punch.left(PunchType.Straight),
+                Punch.right(PunchType.Straight)
+            )
+        ),
+        PunchCombo(
             "Cross",
             listOf(
                 Punch.right(PunchType.Straight)
