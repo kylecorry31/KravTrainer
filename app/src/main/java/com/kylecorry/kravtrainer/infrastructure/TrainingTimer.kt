@@ -26,6 +26,7 @@ class TrainingTimer(private val totalSeconds: Int): Observable() {
     }
 
     fun stop(){
+        remainingSeconds = 0
         timer?.cancel()
         timer = null
     }
