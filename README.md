@@ -1,2 +1,2 @@
-# krav-trainer-android
- The Android companion app for the Krav Trainer gloves
+# Shadow Boxer
+ The Android companion app for the Shadow Boxer gloves
