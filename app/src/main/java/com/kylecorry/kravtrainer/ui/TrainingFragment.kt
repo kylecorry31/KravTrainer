@@ -14,9 +14,7 @@ import androidx.fragment.app.Fragment
 import com.kylecorry.kravtrainer.R
 import com.kylecorry.kravtrainer.doTransaction
 import com.kylecorry.kravtrainer.domain.models.*
-import com.kylecorry.kravtrainer.domain.services.PunchClassifier
-import com.kylecorry.kravtrainer.domain.services.PunchComboTracker
-import com.kylecorry.kravtrainer.domain.services.PunchStatAggregator
+import com.kylecorry.kravtrainer.domain.services.*
 import com.kylecorry.kravtrainer.infrastructure.BluetoothGloves
 import com.kylecorry.kravtrainer.infrastructure.TrainingTimer
 import java.util.*
@@ -37,8 +35,8 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
     private lateinit var gloves: BluetoothGloves
     private var timer: TrainingTimer? = null
 
-    private val leftPunchClassifier = PunchClassifier()
-    private val rightPunchClassifier = PunchClassifier()
+    private val leftPunchClassifier = RuleBasedPunchClassifier()
+    private val rightPunchClassifier = RuleBasedPunchClassifier()
     private var punchStatAggregator = PunchStatAggregator()
 
     private var lastLeftPunch: PunchType? = null

@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kylecorry.kravtrainer.R
 import com.kylecorry.kravtrainer.doTransaction
-import com.kylecorry.kravtrainer.infrastructure.PunchGestureRepo
 
 class MainActivity : AppCompatActivity() {
 

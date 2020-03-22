@@ -3,11 +3,11 @@ package com.kylecorry.kravtrainer.domain.services
 import com.kylecorry.kravtrainer.domain.models.Acceleration
 import com.kylecorry.kravtrainer.domain.models.PunchType
 
-class PunchClassifier {
+class RuleBasedPunchClassifier: IPunchClassifier {
 
     private var lastReading = 0L
 
-    fun classify(reading: Acceleration): PunchType? {
+    override fun classify(reading: Acceleration): PunchType? {
 
         val currentTime = System.currentTimeMillis()
 

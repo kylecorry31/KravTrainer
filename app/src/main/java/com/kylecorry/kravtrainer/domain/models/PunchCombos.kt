@@ -35,7 +35,7 @@ object PunchCombos {
             listOf(
                 Punch.left(PunchType.Straight),
                 Punch.right(PunchType.Straight),
-                Punch.left(PunchType.Hook), // Liver
+                Punch.left(PunchType.Liver),
                 Punch.left(PunchType.Hook),
                 Punch.right(PunchType.Straight)
             )
@@ -79,6 +79,18 @@ object PunchCombos {
             "Cross",
             listOf(
                 Punch.right(PunchType.Straight)
+            )
+        ),
+        PunchCombo(
+            "Left Uppercut",
+            listOf(
+                Punch.left(PunchType.Uppercut)
+            )
+        ),
+        PunchCombo(
+            "Right Uppercut",
+            listOf(
+                Punch.right(PunchType.Uppercut)
             )
         )
     )
