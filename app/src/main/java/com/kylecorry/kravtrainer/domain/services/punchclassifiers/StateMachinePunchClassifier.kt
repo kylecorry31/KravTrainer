@@ -1,16 +1,27 @@
-package com.kylecorry.kravtrainer.domain.services
+package com.kylecorry.kravtrainer.domain.services.punchclassifiers
 
 import com.kylecorry.kravtrainer.domain.models.Acceleration
 import com.kylecorry.kravtrainer.domain.models.PunchType
 
-class StateMachinePunchClassifier : IPunchClassifier {
+class StateMachinePunchClassifier :
+    IPunchClassifier {
 
     private val punches = mapOf(
-        Pair(PunchType.Straight, StraightPunchSM()),
-        Pair(PunchType.Hook, HookSM()),
-        Pair(PunchType.Uppercut, UppercutSM()),
-        Pair(PunchType.Liver, LiverSM()),
-        Pair(PunchType.Hammer, HammerSM())
+        Pair(PunchType.Straight,
+            StraightPunchSM()
+        ),
+        Pair(PunchType.Hook,
+            HookSM()
+        ),
+        Pair(PunchType.Uppercut,
+            UppercutSM()
+        ),
+        Pair(PunchType.Liver,
+            LiverSM()
+        ),
+        Pair(PunchType.Hammer,
+            HammerSM()
+        )
     )
 
     private var lastReading = 0L
@@ -43,7 +54,8 @@ class StateMachinePunchClassifier : IPunchClassifier {
     }
 
 
-    private class StraightPunchSM: IPunchStateMachine {
+    private class StraightPunchSM:
+        IPunchStateMachine {
 
         private var state = 0
 
@@ -75,7 +87,8 @@ class StateMachinePunchClassifier : IPunchClassifier {
 
     }
 
-    private class HookSM: IPunchStateMachine {
+    private class HookSM:
+        IPunchStateMachine {
 
         private var state = 0
 
@@ -112,7 +125,8 @@ class StateMachinePunchClassifier : IPunchClassifier {
 
     }
 
-    private class UppercutSM: IPunchStateMachine {
+    private class UppercutSM:
+        IPunchStateMachine {
 
         private var state = 0
 
@@ -136,7 +150,8 @@ class StateMachinePunchClassifier : IPunchClassifier {
 
     }
 
-    private class LiverSM: IPunchStateMachine {
+    private class LiverSM:
+        IPunchStateMachine {
 
         private var state = 0
 
@@ -160,7 +175,8 @@ class StateMachinePunchClassifier : IPunchClassifier {
 
     }
 
-    private class HammerSM: IPunchStateMachine {
+    private class HammerSM:
+        IPunchStateMachine {
 
         private var state = 0
 

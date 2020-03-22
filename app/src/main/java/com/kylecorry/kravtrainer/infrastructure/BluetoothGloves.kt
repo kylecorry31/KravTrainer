@@ -2,7 +2,7 @@ package com.kylecorry.kravtrainer.infrastructure
 
 import com.kylecorry.kravtrainer.domain.models.Acceleration
 import com.kylecorry.kravtrainer.domain.models.PunchType
-import com.kylecorry.kravtrainer.domain.services.PunchClassifierFactory
+import com.kylecorry.kravtrainer.domain.services.punchclassifiers.PunchClassifierFactory
 import java.util.*
 
 class BluetoothGloves(address: String): Observable(), SerialListener {

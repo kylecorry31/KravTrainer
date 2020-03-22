@@ -1,4 +1,4 @@
-package com.kylecorry.kravtrainer.domain.services
+package com.kylecorry.kravtrainer.domain.services.punchclassifiers
 
 import com.kylecorry.kravtrainer.domain.models.Acceleration
 import com.kylecorry.kravtrainer.domain.models.PunchType
@@ -6,7 +6,8 @@ import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class DTWPunchClassifier: IPunchClassifier {
+class DTWPunchClassifier:
+    IPunchClassifier {
 
     val windowSize = 15
 

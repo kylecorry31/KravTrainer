@@ -18,6 +18,7 @@ import com.kylecorry.kravtrainer.domain.services.*
 import com.kylecorry.kravtrainer.infrastructure.BluetoothGloves
 import com.kylecorry.kravtrainer.infrastructure.TrainingStatsRepo
 import com.kylecorry.kravtrainer.domain.services.TrainingTimer
+import com.kylecorry.kravtrainer.domain.services.punchclassifiers.RuleBasedPunchClassifier
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 import kotlin.concurrent.timerTask
@@ -40,8 +41,10 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
 
     private lateinit var clock: Timer
 
-    private val leftPunchClassifier = RuleBasedPunchClassifier()
-    private val rightPunchClassifier = RuleBasedPunchClassifier()
+    private val leftPunchClassifier =
+        RuleBasedPunchClassifier()
+    private val rightPunchClassifier =
+        RuleBasedPunchClassifier()
     private var punchStatAggregator = PunchStatAggregator()
 
     private var lastLeftPunch: PunchType? = null

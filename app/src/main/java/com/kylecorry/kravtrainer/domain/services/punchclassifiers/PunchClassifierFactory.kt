@@ -1,4 +1,4 @@
-package com.kylecorry.kravtrainer.domain.services
+package com.kylecorry.kravtrainer.domain.services.punchclassifiers
 
 object PunchClassifierFactory {
 
