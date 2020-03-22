@@ -80,7 +80,6 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
         val stats = punchStatAggregator.getStats(trainingTime)
         val db = StatsDB(context!!)
         db.create(stats)
-        println(db.stats)
         fragmentManager?.doTransaction {
             this.replace(
                 R.id.fragment_holder,
@@ -236,11 +235,7 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
         if (secondsLeft <= 0) {
             // Announce end
             // Return to training select
-            tts.speak("Training complete, nice work!", TextToSpeech.QUEUE_FLUSH, null)
-
-            handler.postDelayed(timerTask {
-                    completeTraining()
-            }, 2000)
+            completeTraining()
         }
 
         timeProgressBar.progress = secondsLeft

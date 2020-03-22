@@ -7,17 +7,17 @@
     <string name="gloves_disconnected">Disconnected</string>
     <string name="action_training">Training</string>
     <string name="action_stats">Stats</string>
-    <string name="button_2_minute">2 Minutes</string>
-    <string name="button_4_minutes">4 Minutes</string>
-    <string name="button_unlimited">Unlimited</string>
+    <string name="button_2_minute">2 minute combos</string>
+    <string name="button_4_minutes">4 minute combos</string>
+    <string name="button_unlimited">unlimited combos</string>
     <string name="title_stats">Stats</string>
     <string name="button_end_session">End Session</string>
     <string name="title_train">Train</string>
     <string name="title_training_complete">Training Complete</string>
     <string name="complete_combos">Combos</string>
-    <string name="completed_punches_label">Punches</string>
-    <string name="completed_minutes">Duration</string>
-    <string name="completed_accuracy">Accuracy</string>
+    <string name="completed_punches_label">punches</string>
+    <string name="completed_minutes">duration</string>
+    <string name="completed_accuracy">accuracy</string>
     <string name="home_btn">Finish</string>
-    <string name="max_punch_strength">Force</string>
+    <string name="max_punch_strength">force</string>
 </resources>

@@ -2,6 +2,7 @@ package com.kylecorry.kravtrainer.ui
 
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,10 @@ import com.kylecorry.kravtrainer.domain.models.*
 import kotlin.math.roundToInt
 
 
-class TrainingCompleteFragment(private val stats: TrainingStats) : Fragment() {
+class TrainingCompleteFragment(private val stats: TrainingStats) : Fragment(),
+    TextToSpeech.OnInitListener {
+
+    private lateinit var tts: TextToSpeech
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_training_complete, container, false)
@@ -41,6 +45,22 @@ class TrainingCompleteFragment(private val stats: TrainingStats) : Fragment() {
             }
         }
 
+        tts = TextToSpeech(context, this)
+
         return view
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (tts.isSpeaking){
+            tts.stop()
+        }
+        tts.shutdown()
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS){
+            tts.speak("Training complete, nice work!", TextToSpeech.QUEUE_FLUSH, null)
+        }
     }
 }
