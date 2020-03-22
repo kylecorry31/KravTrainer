@@ -44,6 +44,8 @@ class TrainingSessionHistoryFragment : Fragment() {
     }
 
     private fun updateUI(sessions: List<TrainingSession>){
+        // TODO: List all sessions
+        // TODO: Display graph of accuracy (or other info) over time
         var incorrect = 0
         var correct = 0
         var combos = 0

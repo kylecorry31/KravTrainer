@@ -4,7 +4,7 @@ import com.kylecorry.kravtrainer.domain.models.Punch
 import com.kylecorry.kravtrainer.domain.models.PunchCombo
 import com.kylecorry.kravtrainer.domain.models.PunchType
 
-class PunchComboTracker(val combo: PunchCombo){
+class ComboTracker(val combo: PunchCombo){
     private var currentIdx: Int = 0
 
     val index: Int

@@ -18,10 +18,7 @@ import com.kylecorry.kravtrainer.domain.services.*
 import com.kylecorry.kravtrainer.infrastructure.BluetoothGloves
 import com.kylecorry.kravtrainer.infrastructure.TrainingSessionRepo
 import com.kylecorry.kravtrainer.domain.services.TrainingTimer
-import com.kylecorry.kravtrainer.domain.services.punchclassifiers.RuleBasedPunchClassifier
-import java.time.Duration
 import java.util.*
-import kotlin.concurrent.fixedRateTimer
 import kotlin.concurrent.timerTask
 import kotlin.random.Random
 
@@ -34,19 +31,12 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
     private lateinit var comboProgressDots: LinearLayout
     private lateinit var currentMoveTxt: TextView
 
-    private lateinit var comboTracker: PunchComboTracker
+    private lateinit var comboTracker: ComboTracker
     private lateinit var tts: TextToSpeech
     private lateinit var gloves: BluetoothGloves
     private var timer: TrainingTimer? = null
-    private var trainingTime: Long = 0
 
-    private lateinit var clock: Timer
-
-    private val leftPunchClassifier =
-        RuleBasedPunchClassifier()
-    private val rightPunchClassifier =
-        RuleBasedPunchClassifier()
-    private var punchStatAggregator = PunchStatAggregator()
+    private var sessionRecorder = TrainingSessionRecorder()
 
     private var lastLeftPunch: PunchType? = null
     private var lastRightPunch: PunchType? = null
@@ -80,7 +70,7 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
     }
 
     private fun completeTraining(){
-        val stats = punchStatAggregator.getStats(Duration.ofSeconds(trainingTime))
+        val stats = sessionRecorder.createSessionReport()
         val db = TrainingSessionRepo(context!!)
         db.create(stats)
         fragmentManager?.doTransaction {
@@ -102,11 +92,6 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
         timer?.addObserver(this)
 
         handler = Handler(Looper.getMainLooper())
-        clock = fixedRateTimer(period = 1000){
-            handler.post {
-                trainingTime++
-            }
-        }
     }
 
     override fun onPause() {
@@ -123,24 +108,22 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
         gloves.stop()
 
         mediaPlayer?.release()
-
-        clock.cancel()
     }
 
     private fun onPunch(punch: Punch){
         if (comboTracker.matches(punch)){
-            punchStatAggregator.correct(punch)
+            sessionRecorder.correct(punch)
             playSound(R.raw.success)
             comboTracker.next()
             updateComboProgress()
         } else {
-            punchStatAggregator.incorrect(punch)
+            sessionRecorder.incorrect(punch)
             playSound(R.raw.fail)
         }
 
         if (comboTracker.isDone){
             handler.postDelayed(timerTask {
-                punchStatAggregator.completeCombo()
+                sessionRecorder.completeCombo()
                 nextCombo()
             }, 1000)
         }
@@ -148,7 +131,7 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
 
     private fun nextCombo(){
         val combo = getNextCombo()
-        comboTracker = PunchComboTracker(combo)
+        comboTracker = ComboTracker(combo)
         announceNewCombo()
     }
 
@@ -200,6 +183,7 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS){
+            sessionRecorder.start()
             nextCombo()
         }
     }
@@ -212,8 +196,8 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
         }
 
         // TODO: Set connection indicator
-        punchStatAggregator.recordStrength(gloves.leftStrength)
-        punchStatAggregator.recordStrength(gloves.rightStrength)
+        sessionRecorder.recordStrength(gloves.leftStrength)
+        sessionRecorder.recordStrength(gloves.rightStrength)
 
         val leftPunchType = gloves.left
         val rightPunchType = gloves.right
