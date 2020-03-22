@@ -1,6 +1,5 @@
 package com.kylecorry.kravtrainer.infrastructure
 
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
 import android.os.Handler
 import android.os.Looper
@@ -14,6 +13,9 @@ class BluetoothSerial(private val address: String) {
     private var socket: BluetoothSocket? = null
     private var input: InputStream? = null
     private var output: OutputStream? = null
+
+    private val handler = Handler(Looper.getMainLooper())
+
 
     val isConnected: Boolean
         get() = socket?.isConnected == true
@@ -36,10 +38,14 @@ class BluetoothSerial(private val address: String) {
             }
 
             if (socket?.isConnected == true){
-                Handler(Looper.getMainLooper()).post {
+                handler.post {
                     listeners.forEach { it.onConnect() }
                 }
                 startInputListener()
+            } else {
+                handler.post {
+                    listeners.forEach { it.onDisconnect() }
+                }
             }
         }
     }
@@ -95,7 +101,6 @@ class BluetoothSerial(private val address: String) {
         thread {
 
             val inputStream = input!!
-            val handler = Handler(Looper.getMainLooper())
 
             val reader = BufferedReader(InputStreamReader(inputStream))
 

@@ -39,12 +39,8 @@ class BluetoothGloves(address: String): Observable(), SerialListener {
             field = value
         }
 
-    var isConnected: Boolean = true
-        private set(value){
-            setChanged()
-            notifyObservers()
-            field = value
-        }
+    val isConnected: Boolean
+        get() = serial.isConnected
 
     private var started = false
 
@@ -84,13 +80,13 @@ class BluetoothGloves(address: String): Observable(), SerialListener {
     }
 
     override fun onConnect() {
-        isConnected = true
-        println("CONNECTED")
+        setChanged()
+        notifyObservers()
     }
 
     override fun onDisconnect() {
-        isConnected = false
-        println("DISCONNECTED")
+        setChanged()
+        notifyObservers()
     }
 
 

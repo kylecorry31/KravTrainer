@@ -17,7 +17,7 @@ import com.kylecorry.kravtrainer.domain.models.*
 import com.kylecorry.kravtrainer.domain.services.*
 import com.kylecorry.kravtrainer.infrastructure.BluetoothGloves
 import com.kylecorry.kravtrainer.infrastructure.TrainingStatsRepo
-import com.kylecorry.kravtrainer.infrastructure.TrainingTimer
+import com.kylecorry.kravtrainer.domain.services.TrainingTimer
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 import kotlin.concurrent.timerTask

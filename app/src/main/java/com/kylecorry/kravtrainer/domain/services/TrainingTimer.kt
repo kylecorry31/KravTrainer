@@ -1,4 +1,4 @@
-package com.kylecorry.kravtrainer.infrastructure
+package com.kylecorry.kravtrainer.domain.services
 
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
