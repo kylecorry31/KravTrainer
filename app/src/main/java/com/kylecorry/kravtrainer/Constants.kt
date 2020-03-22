@@ -2,6 +2,7 @@ package com.kylecorry.kravtrainer
 
 object Constants {
 
+    const val DB_NAME = "shadow_boxer"
     const val STATS_TABLE = "stats"
     const val STATS_CORRECT = "correct"
     const val STATS_INCORRECT = "incorrect"

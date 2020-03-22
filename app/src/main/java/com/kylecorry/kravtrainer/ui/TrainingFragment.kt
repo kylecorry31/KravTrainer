@@ -16,11 +16,10 @@ import com.kylecorry.kravtrainer.doTransaction
 import com.kylecorry.kravtrainer.domain.models.*
 import com.kylecorry.kravtrainer.domain.services.*
 import com.kylecorry.kravtrainer.infrastructure.BluetoothGloves
-import com.kylecorry.kravtrainer.infrastructure.StatsDB
+import com.kylecorry.kravtrainer.infrastructure.TrainingStatsRepo
 import com.kylecorry.kravtrainer.infrastructure.TrainingTimer
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
-import kotlin.concurrent.timer
 import kotlin.concurrent.timerTask
 import kotlin.random.Random
 
@@ -78,7 +77,7 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
 
     private fun completeTraining(){
         val stats = punchStatAggregator.getStats(trainingTime)
-        val db = StatsDB(context!!)
+        val db = TrainingStatsRepo(context!!)
         db.create(stats)
         fragmentManager?.doTransaction {
             this.replace(

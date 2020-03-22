@@ -5,12 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.kylecorry.kravtrainer.R
 import com.kylecorry.kravtrainer.domain.models.TrainingStats
-import com.kylecorry.kravtrainer.infrastructure.StatsDB
+import com.kylecorry.kravtrainer.infrastructure.TrainingStatsRepo
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -22,7 +21,7 @@ class StatsFragment : Fragment() {
     private lateinit var minutesTxt: TextView
     private lateinit var strengthTxt: TextView
 
-    private lateinit var db: StatsDB
+    private lateinit var statsRepo: TrainingStatsRepo
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_stats, container, false)
@@ -38,8 +37,8 @@ class StatsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        db = StatsDB(context!!)
-        updateUI(db.stats)
+        statsRepo = TrainingStatsRepo(context!!)
+        updateUI(statsRepo.getAll())
     }
 
     private fun updateUI(stats: List<TrainingStats>){
