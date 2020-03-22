@@ -1,6 +1,8 @@
 package com.kylecorry.kravtrainer.domain.models
 
-data class TrainingStats(val correct: Int, val incorrect: Int, val combos: Int, val strength: Float, val seconds: Int) {
+import java.time.LocalDateTime
+
+data class TrainingStats(val id: Int, val date: LocalDateTime, val correct: Int, val incorrect: Int, val combos: Int, val strength: Float, val seconds: Int) {
     val punches: Int
         get() = correct + incorrect
 

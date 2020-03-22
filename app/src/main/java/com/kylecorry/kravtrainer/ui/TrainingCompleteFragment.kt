@@ -1,5 +1,6 @@
 package com.kylecorry.kravtrainer.ui
 
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +30,7 @@ class TrainingCompleteFragment(private val stats: TrainingStats) : Fragment() {
         numCombosTxt.text = stats.combos.toString()
         accuracyTxt.text = "${(stats.accuracy * 100).roundToInt()} %"
         minutesTxt.text = "${(stats.seconds / 60)}:${(stats.seconds % 60).toString().padStart(2, '0')}"
-        strengthTxt.text = "${stats.strength.roundToInt()}g"
+        strengthTxt.text = "${(stats.strength / SensorManager.GRAVITY_EARTH).roundToInt()}g"
 
         doneBtn.setOnClickListener {
             fragmentManager?.doTransaction {
