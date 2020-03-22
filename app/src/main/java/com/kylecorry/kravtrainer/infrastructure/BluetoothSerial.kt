@@ -11,17 +11,19 @@ import kotlin.concurrent.thread
 class BluetoothSerial(private val address: String) {
 
     private val listeners = mutableListOf<SerialListener>()
-    private val adapter = BluetoothAdapter.getDefaultAdapter()
     private var socket: BluetoothSocket? = null
     private var input: InputStream? = null
     private var output: OutputStream? = null
+
+    val isConnected: Boolean
+        get() = socket?.isConnected == true
 
     /**
      * Connect to the bluetooth device
      */
     fun connect(){
         thread {
-            val device = adapter.getRemoteDevice(address)
+            val device = Bluetooth.getDevice(address)
 
             try {
                 socket = device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))

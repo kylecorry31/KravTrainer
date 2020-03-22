@@ -25,7 +25,7 @@ import kotlin.concurrent.timerTask
 import kotlin.random.Random
 
 
-class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInitListener, Observer {
+class TrainingFragment(private val time: Int?, private val address: String) : Fragment(), TextToSpeech.OnInitListener, Observer {
 
     private lateinit var timeProgressBar: ProgressBar
     private lateinit var comboTxt: TextView
@@ -63,7 +63,7 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
 
         endBtn.setOnClickListener { completeTraining() }
 
-        gloves = BluetoothGloves()
+        gloves = BluetoothGloves(address)
 
         if (time == null){
             timeProgressBar.visibility = View.INVISIBLE

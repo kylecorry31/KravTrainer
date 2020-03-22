@@ -3,10 +3,9 @@ package com.kylecorry.kravtrainer.infrastructure
 import com.kylecorry.kravtrainer.domain.models.Acceleration
 import java.util.*
 
-class BluetoothGloves: Observable(), SerialListener {
+class BluetoothGloves(address: String): Observable(), SerialListener {
 
-    private val serial = BluetoothSerial("98:D3:11:FC:47:C4")
-    private var count = 0
+    private val serial = BluetoothSerial(address)
 
     var left: Acceleration = Acceleration.zero
         private set(value) {
