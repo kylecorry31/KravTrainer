@@ -1,11 +1,9 @@
 package com.kylecorry.kravtrainer.domain.services
 
-import com.kylecorry.kravtrainer.domain.models.Acceleration
 import com.kylecorry.kravtrainer.domain.models.Punch
-import com.kylecorry.kravtrainer.domain.models.TrainingStats
+import com.kylecorry.kravtrainer.domain.models.TrainingSession
+import java.time.Duration
 import java.time.LocalDateTime
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 class PunchStatAggregator {
 
@@ -35,8 +33,16 @@ class PunchStatAggregator {
         }
     }
 
-    fun getStats(seconds: Int): TrainingStats {
-        return TrainingStats(-1, LocalDateTime.now(), correctPunches, incorrectPunches, combos, strength, seconds)
+    fun getStats(duration: Duration): TrainingSession {
+        return TrainingSession(
+            -1,
+            LocalDateTime.now(),
+            duration,
+            incorrectPunches,
+            correctPunches,
+            strength,
+            combos
+        )
     }
 
 }

@@ -12,10 +12,11 @@ import androidx.fragment.app.Fragment
 import com.kylecorry.kravtrainer.R
 import com.kylecorry.kravtrainer.doTransaction
 import com.kylecorry.kravtrainer.domain.models.*
+import com.kylecorry.kravtrainer.toFormattedString
 import kotlin.math.roundToInt
 
 
-class TrainingCompleteFragment(private val stats: TrainingStats) : Fragment(),
+class TrainingCompleteFragment(private val session: TrainingSession) : Fragment(),
     TextToSpeech.OnInitListener {
 
     private lateinit var tts: TextToSpeech
@@ -30,11 +31,11 @@ class TrainingCompleteFragment(private val stats: TrainingStats) : Fragment(),
         val strengthTxt = view.findViewById<TextView>(R.id.strength)
         val doneBtn = view.findViewById<Button>(R.id.home_btn)
 
-        numPunchesTxt.text = stats.punches.toString()
-        numCombosTxt.text = stats.combos.toString()
-        accuracyTxt.text = "${(stats.accuracy * 100).roundToInt()} %"
-        minutesTxt.text = "${(stats.seconds / 60)}:${(stats.seconds % 60).toString().padStart(2, '0')}"
-        strengthTxt.text = "${(stats.strength / SensorManager.GRAVITY_EARTH).roundToInt()}g"
+        numPunchesTxt.text = session.punches.toString()
+        numCombosTxt.text = session.combos.toString()
+        accuracyTxt.text = "${(session.accuracy * 100).roundToInt()} %"
+        minutesTxt.text = session.duration.toFormattedString()
+        strengthTxt.text = "${(session.strength / SensorManager.GRAVITY_EARTH).roundToInt()}g"
 
         doneBtn.setOnClickListener {
             fragmentManager?.doTransaction {

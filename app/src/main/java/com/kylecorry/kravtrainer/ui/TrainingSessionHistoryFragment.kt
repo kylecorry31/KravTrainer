@@ -8,12 +8,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.kylecorry.kravtrainer.R
-import com.kylecorry.kravtrainer.domain.models.TrainingStats
-import com.kylecorry.kravtrainer.infrastructure.TrainingStatsRepo
+import com.kylecorry.kravtrainer.domain.models.TrainingSession
+import com.kylecorry.kravtrainer.infrastructure.TrainingSessionRepo
+import com.kylecorry.kravtrainer.toFormattedString
+import java.time.Duration
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-class StatsFragment : Fragment() {
+class TrainingSessionHistoryFragment : Fragment() {
 
     private lateinit var numPunchesTxt: TextView
     private lateinit var numCombosTxt: TextView
@@ -21,10 +23,10 @@ class StatsFragment : Fragment() {
     private lateinit var minutesTxt: TextView
     private lateinit var strengthTxt: TextView
 
-    private lateinit var statsRepo: TrainingStatsRepo
+    private lateinit var sessionRepo: TrainingSessionRepo
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_stats, container, false)
+        val view = inflater.inflate(R.layout.fragment_training_session_history, container, false)
 
         numPunchesTxt = view.findViewById(R.id.num_punches)
         numCombosTxt = view.findViewById(R.id.num_combos)
@@ -37,23 +39,23 @@ class StatsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        statsRepo = TrainingStatsRepo(context!!)
-        updateUI(statsRepo.getAll())
+        sessionRepo = TrainingSessionRepo(context!!)
+        updateUI(sessionRepo.getAll())
     }
 
-    private fun updateUI(stats: List<TrainingStats>){
+    private fun updateUI(sessions: List<TrainingSession>){
         var incorrect = 0
         var correct = 0
         var combos = 0
-        var duration = 0
+        var duration = Duration.ofSeconds(0)
         var force = 0f
 
-        for (stat in stats){
-            incorrect += stat.incorrect
-            correct += stat.correct
-            combos += stat.combos
-            duration += stat.seconds
-            force = max(force, stat.strength)
+        for (session in sessions){
+            incorrect += session.incorrect
+            correct += session.correct
+            combos += session.combos
+            duration = duration.plus(session.duration)
+            force = max(force, session.strength)
         }
 
         force /= SensorManager.GRAVITY_EARTH
@@ -67,7 +69,7 @@ class StatsFragment : Fragment() {
         numPunchesTxt.text = punches.toString()
         numCombosTxt.text = combos.toString()
         accuracyTxt.text = "${(accuracy * 100).roundToInt()} %"
-        minutesTxt.text = "${(duration / 60)}:${(duration % 60).toString().padStart(2, '0')}"
+        minutesTxt.text = duration.toFormattedString()
         strengthTxt.text = "${force.roundToInt()}g"
 
     }

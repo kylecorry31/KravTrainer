@@ -3,13 +3,13 @@ package com.kylecorry.kravtrainer
 object Constants {
 
     const val DB_NAME = "shadow_boxer"
-    const val STATS_TABLE = "stats"
-    const val STATS_CORRECT = "correct"
-    const val STATS_INCORRECT = "incorrect"
-    const val STATS_COMBOS = "combos"
-    const val STATS_DURATION = "duration"
-    const val STATS_FORCE = "force"
-    const val STATS_CREATE_TIME = "createdOn"
-    const val STATS_ID = "id"
+    const val TRAINING_SESSION_TABLE = "Sessions"
+    const val TRAINING_SESSION_CORRECT = "correct"
+    const val TRAINING_SESSION_INCORRECT = "incorrect"
+    const val TRAINING_SESSION_COMBOS = "combos"
+    const val TRAINING_SESSION_DURATION = "duration"
+    const val TRAINING_SESSION_FORCE = "force"
+    const val TRAINING_SESSION_CREATE_TIME = "createdOn"
+    const val TRAINING_SESSION_ID = "id"
 
 }

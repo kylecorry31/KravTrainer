@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         ),
         Pair(
             R.id.action_stats,
-            StatsFragment()
+            TrainingSessionHistoryFragment()
         )
     )
 

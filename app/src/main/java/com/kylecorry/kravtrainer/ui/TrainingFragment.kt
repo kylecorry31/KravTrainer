@@ -16,9 +16,10 @@ import com.kylecorry.kravtrainer.doTransaction
 import com.kylecorry.kravtrainer.domain.models.*
 import com.kylecorry.kravtrainer.domain.services.*
 import com.kylecorry.kravtrainer.infrastructure.BluetoothGloves
-import com.kylecorry.kravtrainer.infrastructure.TrainingStatsRepo
+import com.kylecorry.kravtrainer.infrastructure.TrainingSessionRepo
 import com.kylecorry.kravtrainer.domain.services.TrainingTimer
 import com.kylecorry.kravtrainer.domain.services.punchclassifiers.RuleBasedPunchClassifier
+import java.time.Duration
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 import kotlin.concurrent.timerTask
@@ -37,7 +38,7 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
     private lateinit var tts: TextToSpeech
     private lateinit var gloves: BluetoothGloves
     private var timer: TrainingTimer? = null
-    private var trainingTime: Int = 0
+    private var trainingTime: Long = 0
 
     private lateinit var clock: Timer
 
@@ -79,8 +80,8 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
     }
 
     private fun completeTraining(){
-        val stats = punchStatAggregator.getStats(trainingTime)
-        val db = TrainingStatsRepo(context!!)
+        val stats = punchStatAggregator.getStats(Duration.ofSeconds(trainingTime))
+        val db = TrainingSessionRepo(context!!)
         db.create(stats)
         fragmentManager?.doTransaction {
             this.replace(
