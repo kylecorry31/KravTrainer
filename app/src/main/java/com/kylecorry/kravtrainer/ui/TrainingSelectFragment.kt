@@ -49,6 +49,7 @@ class TrainingSelectFragment : Fragment() {
             Toast.makeText(context, "Bluetooth is disabled, please enable it to train.", Toast.LENGTH_LONG).show()
         }
 
+        // TODO: Allow user to override this
         val hc05 = Bluetooth.devices.firstOrNull { it.name == "HC-05" }
 
         if (hc05 != null){
