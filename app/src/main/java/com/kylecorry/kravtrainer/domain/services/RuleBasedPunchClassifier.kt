@@ -20,7 +20,7 @@ class RuleBasedPunchClassifier: IPunchClassifier {
             return PunchType.Hook
         }
 
-        if (reading.x < -30){
+        if (reading.x < -25){
             lastReading = currentTime
             return PunchType.Straight
         }
