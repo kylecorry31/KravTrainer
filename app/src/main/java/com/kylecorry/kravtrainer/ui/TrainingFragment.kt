@@ -18,7 +18,9 @@ import com.kylecorry.kravtrainer.domain.services.*
 import com.kylecorry.kravtrainer.infrastructure.BluetoothGloves
 import com.kylecorry.kravtrainer.infrastructure.TrainingTimer
 import java.util.*
+import kotlin.concurrent.fixedRateTimer
 import kotlin.concurrent.timer
+import kotlin.concurrent.timerTask
 import kotlin.random.Random
 
 
@@ -34,6 +36,9 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
     private lateinit var tts: TextToSpeech
     private lateinit var gloves: BluetoothGloves
     private var timer: TrainingTimer? = null
+    private var trainingTime: Int = 0
+
+    private lateinit var clock: Timer
 
     private val leftPunchClassifier = RuleBasedPunchClassifier()
     private val rightPunchClassifier = RuleBasedPunchClassifier()
@@ -55,7 +60,7 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
         comboProgressDots = view.findViewById(R.id.combo_progress_dots)
         currentMoveTxt = view.findViewById(R.id.current_move)
 
-        endBtn.setOnClickListener { returnToTrainingSelect() }
+        endBtn.setOnClickListener { completeTraining() }
 
         gloves = BluetoothGloves()
 
@@ -70,11 +75,14 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
         return view
     }
 
-    private fun returnToTrainingSelect(){
+    private fun completeTraining(){
+        val stats = punchStatAggregator.getStats(trainingTime)
+        // TODO: Save session stats in database
+
         fragmentManager?.doTransaction {
             this.replace(
                 R.id.fragment_holder,
-                TrainingSelectFragment()
+                TrainingCompleteFragment(stats)
             )
         }
     }
@@ -90,6 +98,11 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
         timer?.addObserver(this)
 
         handler = Handler(Looper.getMainLooper())
+        clock = fixedRateTimer(period = 1000){
+            handler.post {
+                trainingTime++
+            }
+        }
     }
 
     override fun onPause() {
@@ -107,12 +120,10 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
 
         mediaPlayer?.release()
 
+        clock.cancel()
     }
 
     private fun onPunch(punch: Punch){
-
-        println(punch)
-
         if (comboTracker.matches(punch)){
             punchStatAggregator.correct(punch)
             playSound(R.raw.success)
@@ -124,12 +135,10 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
         }
 
         if (comboTracker.isDone){
-            timer(period = 1000){
-                handler.post {
-                    nextCombo()
-                }
-                cancel()
-            }
+            handler.postDelayed(timerTask {
+                punchStatAggregator.completeCombo()
+                nextCombo()
+            }, 1000)
         }
     }
 
@@ -173,6 +182,8 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
             idx++
         }
 
+        if (comboTracker.isDone) return
+
         val currentMove = comboTracker.currentPunch
         currentMoveTxt.text = "${currentMove?.hand} ${currentMove?.punchType}"
     }
@@ -198,6 +209,9 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
 
         // TODO: Set connection indicator
 
+        punchStatAggregator.recordStrength(gloves.left)
+        punchStatAggregator.recordStrength(gloves.right)
+
         val leftPunchType = leftPunchClassifier.classify(gloves.left)
         val rightPunchType = rightPunchClassifier.classify(gloves.right)
 
@@ -220,7 +234,11 @@ class TrainingFragment(private val time: Int?) : Fragment(), TextToSpeech.OnInit
         if (secondsLeft <= 0) {
             // Announce end
             // Return to training select
-            returnToTrainingSelect()
+            tts.speak("Training complete, nice work!", TextToSpeech.QUEUE_FLUSH, null)
+
+            handler.postDelayed(timerTask {
+                    completeTraining()
+            }, 2000)
         }
 
         timeProgressBar.progress = secondsLeft
