@@ -1,20 +1,38 @@
 package com.kylecorry.kravtrainer.infrastructure
 
 import com.kylecorry.kravtrainer.domain.models.Acceleration
+import com.kylecorry.kravtrainer.domain.models.PunchType
+import com.kylecorry.kravtrainer.domain.services.PunchClassifierFactory
 import java.util.*
 
 class BluetoothGloves(address: String): Observable(), SerialListener {
 
     private val serial = BluetoothSerial(address)
+    private val leftPunchClassifier = PunchClassifierFactory.createPunchClassifier()
+    private val rightPunchClassifier = PunchClassifierFactory.createPunchClassifier()
 
-    var left: Acceleration = Acceleration.zero
+    var left: PunchType? = null
         private set(value) {
             setChanged()
             notifyObservers()
             field = value
         }
 
-    var right: Acceleration = Acceleration.zero
+    var right: PunchType? = null
+        private set(value){
+            setChanged()
+            notifyObservers()
+            field = value
+        }
+
+    var leftStrength: Float = 0f
+        private set(value){
+            setChanged()
+            notifyObservers()
+            field = value
+        }
+
+    var rightStrength: Float = 0f
         private set(value){
             setChanged()
             notifyObservers()
@@ -56,9 +74,11 @@ class BluetoothGloves(address: String): Observable(), SerialListener {
         val acceleration = Acceleration(values[1], values[2], values[3])
 
         if (values[0] == 0f){
-            left = acceleration
+            left = leftPunchClassifier.classify(acceleration)
+            leftStrength = acceleration.magnitude()
         } else {
-            right = acceleration
+            right = rightPunchClassifier.classify(acceleration)
+            rightStrength = acceleration.magnitude()
         }
 
     }

@@ -208,12 +208,11 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
         }
 
         // TODO: Set connection indicator
+        punchStatAggregator.recordStrength(gloves.leftStrength)
+        punchStatAggregator.recordStrength(gloves.rightStrength)
 
-        punchStatAggregator.recordStrength(gloves.left)
-        punchStatAggregator.recordStrength(gloves.right)
-
-        val leftPunchType = leftPunchClassifier.classify(gloves.left)
-        val rightPunchType = rightPunchClassifier.classify(gloves.right)
+        val leftPunchType = gloves.left
+        val rightPunchType = gloves.right
 
         if (leftPunchType != null && leftPunchType != lastLeftPunch){
             onPunch(Punch.left(leftPunchType))

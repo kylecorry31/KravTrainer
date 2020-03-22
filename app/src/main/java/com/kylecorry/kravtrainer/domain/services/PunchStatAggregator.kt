@@ -29,11 +29,9 @@ class PunchStatAggregator {
         combos++
     }
 
-    fun recordStrength(acceleration: Acceleration){
-        val magnitude = sqrt(acceleration.x.pow(2) + acceleration.y.pow(2) + acceleration.z.pow(2))
-
-        if (magnitude > strength){
-            strength = magnitude
+    fun recordStrength(strengthMeterSecondSqr: Float){
+        if (strengthMeterSecondSqr > strength){
+            strength = strengthMeterSecondSqr
         }
     }
 
