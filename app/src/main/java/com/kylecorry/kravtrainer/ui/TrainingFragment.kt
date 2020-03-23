@@ -111,6 +111,8 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
     }
 
     private fun onPunch(punch: Punch){
+        println(punch)
+
         if (comboTracker.matches(punch)){
             sessionRecorder.correct(punch)
             playSound(R.raw.success)

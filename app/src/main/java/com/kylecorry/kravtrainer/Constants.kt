@@ -2,6 +2,8 @@ package com.kylecorry.kravtrainer
 
 object Constants {
 
+    const val WINDOW_SIZE = 15
+
     const val DB_NAME = "shadow_boxer"
     const val TRAINING_SESSION_TABLE = "Sessions"
     const val TRAINING_SESSION_CORRECT = "correct"
