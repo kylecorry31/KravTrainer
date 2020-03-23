@@ -132,10 +132,8 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
         }
 
         if (comboTracker.isDone){
-            handler.postDelayed(timerTask {
-                sessionRecorder.completeCombo()
-                nextCombo()
-            }, 1000)
+            sessionRecorder.completeCombo()
+            nextCombo()
         }
     }
 
