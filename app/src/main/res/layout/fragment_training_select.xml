@@ -33,6 +33,13 @@
             android:text="@string/button_4_minutes" />
 
         <Button
+            android:id="@+id/button_10_minutes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/button_10_minutes" />
+
+        <Button
             android:id="@+id/button_unlimited"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

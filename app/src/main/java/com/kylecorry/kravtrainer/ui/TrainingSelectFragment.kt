@@ -26,6 +26,7 @@ class TrainingSelectFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_training_select, container, false)
         twoMinBtn = view.findViewById(R.id.button_2_minutes)
         fourMinBtn = view.findViewById(R.id.button_4_minutes)
+        val tenMinBtn = view.findViewById<Button>(R.id.button_10_minutes)
         unlimitedBtn = view.findViewById(R.id.button_unlimited)
 
         twoMinBtn.setOnClickListener {
@@ -34,6 +35,10 @@ class TrainingSelectFragment : Fragment() {
 
         fourMinBtn.setOnClickListener {
             startTraining(60 * 4, address)
+        }
+
+        tenMinBtn.setOnClickListener {
+            startTraining(60 * 10, address)
         }
 
         unlimitedBtn.setOnClickListener {

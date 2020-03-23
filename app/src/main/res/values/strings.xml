@@ -9,6 +9,7 @@
     <string name="action_training_session_history">Training History</string>
     <string name="button_2_minute">2 minute combos</string>
     <string name="button_4_minutes">4 minute combos</string>
+    <string name="button_10_minutes">10 minute combos</string>
     <string name="button_unlimited">unlimited combos</string>
     <string name="title_training_session_history">Training History</string>
     <string name="button_end_session">End Session</string>
