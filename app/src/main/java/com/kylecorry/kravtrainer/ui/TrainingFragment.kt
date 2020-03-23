@@ -114,12 +114,12 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
         println(punch)
 
         if (comboTracker.matches(punch)){
-            sessionRecorder.correct(punch)
+            sessionRecorder.correct()
             playSound(R.raw.success)
             comboTracker.next()
             updateComboProgress()
         } else {
-            sessionRecorder.incorrect(punch)
+            sessionRecorder.incorrect()
             playSound(R.raw.fail)
         }
 

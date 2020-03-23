@@ -18,11 +18,11 @@ class TrainingSessionRecorder {
         startTime = LocalDateTime.now()
     }
 
-    fun correct(punch: Punch){
+    fun correct(){
         correctPunches++
     }
 
-    fun incorrect(punch: Punch){
+    fun incorrect(){
         incorrectPunches++
     }
 
