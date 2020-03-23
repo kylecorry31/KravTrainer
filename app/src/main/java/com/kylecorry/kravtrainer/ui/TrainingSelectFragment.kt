@@ -11,8 +11,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.kylecorry.kravtrainer.R
-import com.kylecorry.kravtrainer.doTransaction
-import com.kylecorry.kravtrainer.infrastructure.Bluetooth
+import com.kylecorry.kravtrainer.infrastructure.gloves.Bluetooth
 
 
 class TrainingSelectFragment : Fragment() {

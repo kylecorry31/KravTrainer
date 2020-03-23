@@ -1,13 +1,15 @@
-package com.kylecorry.kravtrainer.infrastructure
+package com.kylecorry.kravtrainer.infrastructure.gloves
 
-import com.kylecorry.kravtrainer.domain.models.Acceleration
-import com.kylecorry.kravtrainer.domain.models.PunchType
-import com.kylecorry.kravtrainer.domain.services.punchclassifiers.PunchClassifierFactory
+import com.kylecorry.kravtrainer.domain.punches.Acceleration
+import com.kylecorry.kravtrainer.domain.punches.PunchType
+import com.kylecorry.kravtrainer.domain.classifiers.PunchClassifierFactory
 import java.util.*
 
-class BluetoothGloves(address: String): Observable(), SerialListener {
+class BluetoothGloves(address: String): Observable(),
+    SerialListener {
 
-    private val serial = BluetoothSerial(address)
+    private val serial =
+        BluetoothSerial(address)
     private val leftPunchClassifier = PunchClassifierFactory.createPunchClassifier()
     private val rightPunchClassifier = PunchClassifierFactory.createPunchClassifier()
 

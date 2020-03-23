@@ -1,4 +1,4 @@
-package com.kylecorry.kravtrainer
+package com.kylecorry.kravtrainer.ui
 
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
@@ -8,7 +8,7 @@ inline fun FragmentManager.doTransaction(func: FragmentTransaction.() -> Fragmen
     beginTransaction().func().commit()
 }
 
-inline fun Duration.toFormattedString(): String {
+fun Duration.toFormattedString(): String {
     val hours = toHours()
     val minutes = toMinutes() % 60
     val secs = seconds % 60

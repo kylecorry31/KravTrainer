@@ -8,7 +8,6 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kylecorry.kravtrainer.R
-import com.kylecorry.kravtrainer.doTransaction
 
 class MainActivity : AppCompatActivity() {
 

@@ -1,12 +1,10 @@
-package com.kylecorry.kravtrainer.domain.services.punchclassifiers
+package com.kylecorry.kravtrainer.domain.classifiers
 
-import com.kylecorry.kravtrainer.Constants
-import com.kylecorry.kravtrainer.domain.models.Acceleration
-import com.kylecorry.kravtrainer.domain.models.Punch
-import com.kylecorry.kravtrainer.domain.models.PunchType
+import com.kylecorry.kravtrainer.domain.punches.Acceleration
+import com.kylecorry.kravtrainer.domain.punches.PunchType
 import java.lang.StringBuilder
 
-class ThresholdSequencePunchClassifier(private val threshold: Float): WindowedPunchClassifier(Constants.WINDOW_SIZE) {
+class OrderPunchClassifier(private val threshold: Float): WindowedPunchClassifier(15) {
 
     private val punchSequences = mapOf(
         Pair(PunchType.Straight, listOf("Xx", "Xzx", "XzYx", "XYzx")),

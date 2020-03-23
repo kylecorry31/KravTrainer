@@ -1,4 +1,4 @@
-package com.kylecorry.kravtrainer.infrastructure
+package com.kylecorry.kravtrainer.infrastructure.gloves
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice

@@ -1,4 +1,4 @@
-package com.kylecorry.kravtrainer.infrastructure
+package com.kylecorry.kravtrainer.infrastructure.gloves
 
 interface SerialListener {
 

@@ -1,7 +1,7 @@
-package com.kylecorry.kravtrainer.domain.services.punchclassifiers
+package com.kylecorry.kravtrainer.domain.classifiers
 
-import com.kylecorry.kravtrainer.domain.models.Acceleration
-import com.kylecorry.kravtrainer.domain.models.PunchType
+import com.kylecorry.kravtrainer.domain.punches.Acceleration
+import com.kylecorry.kravtrainer.domain.punches.PunchType
 
 abstract class WindowedPunchClassifier(private val windowSize: Int): IPunchClassifier {
 

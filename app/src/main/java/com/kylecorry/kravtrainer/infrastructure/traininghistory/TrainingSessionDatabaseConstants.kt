@@ -1,8 +1,6 @@
-package com.kylecorry.kravtrainer
+package com.kylecorry.kravtrainer.infrastructure.traininghistory
 
-object Constants {
-
-    const val WINDOW_SIZE = 15
+object TrainingSessionDatabaseConstants {
 
     const val DB_NAME = "shadow_boxer"
     const val TRAINING_SESSION_TABLE = "Sessions"
