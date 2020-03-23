@@ -1,4 +1,4 @@
-package com.kylecorry.kravtrainer.domain.models
+package com.kylecorry.kravtrainer.domain.training
 
 import java.time.Duration
 import java.time.LocalDateTime

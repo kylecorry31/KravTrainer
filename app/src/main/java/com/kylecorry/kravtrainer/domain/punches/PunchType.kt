@@ -1,4 +1,4 @@
-package com.kylecorry.kravtrainer.domain.models
+package com.kylecorry.kravtrainer.domain.punches
 
 enum class PunchType {
     Straight,

@@ -1,4 +1,4 @@
-package com.kylecorry.kravtrainer.domain.models
+package com.kylecorry.kravtrainer.domain.punches
 
 data class Punch(val hand: Hand, val punchType: PunchType){
     companion object {

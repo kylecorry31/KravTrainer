@@ -1,8 +1,7 @@
-package com.kylecorry.kravtrainer.domain.services
+package com.kylecorry.kravtrainer.domain.combos
 
-import com.kylecorry.kravtrainer.domain.models.Punch
-import com.kylecorry.kravtrainer.domain.models.PunchCombo
-import com.kylecorry.kravtrainer.domain.models.PunchType
+import com.kylecorry.kravtrainer.domain.punches.Punch
+import com.kylecorry.kravtrainer.domain.punches.PunchType
 
 class ComboTracker(val combo: PunchCombo){
     private var currentIdx: Int = 0

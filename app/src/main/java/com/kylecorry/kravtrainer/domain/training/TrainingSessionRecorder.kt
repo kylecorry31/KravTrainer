@@ -1,7 +1,5 @@
-package com.kylecorry.kravtrainer.domain.services
+package com.kylecorry.kravtrainer.domain.training
 
-import com.kylecorry.kravtrainer.domain.models.Punch
-import com.kylecorry.kravtrainer.domain.models.TrainingSession
 import java.time.Duration
 import java.time.LocalDateTime
 
