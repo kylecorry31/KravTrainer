@@ -12,12 +12,14 @@ import android.widget.*
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.kylecorry.kravtrainer.R
-import com.kylecorry.kravtrainer.doTransaction
-import com.kylecorry.kravtrainer.domain.models.*
-import com.kylecorry.kravtrainer.domain.services.*
-import com.kylecorry.kravtrainer.infrastructure.BluetoothGloves
-import com.kylecorry.kravtrainer.infrastructure.TrainingSessionRepo
-import com.kylecorry.kravtrainer.domain.services.TrainingTimer
+import com.kylecorry.kravtrainer.domain.combos.ComboTracker
+import com.kylecorry.kravtrainer.domain.combos.PunchCombo
+import com.kylecorry.kravtrainer.domain.combos.PunchCombos
+import com.kylecorry.kravtrainer.domain.punches.*
+import com.kylecorry.kravtrainer.domain.training.TrainingSessionRecorder
+import com.kylecorry.kravtrainer.infrastructure.gloves.BluetoothGloves
+import com.kylecorry.kravtrainer.infrastructure.traininghistory.TrainingSessionRepo
+import com.kylecorry.kravtrainer.domain.training.TrainingTimer
 import java.util.*
 import kotlin.concurrent.timerTask
 import kotlin.random.Random
@@ -36,7 +38,8 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
     private lateinit var gloves: BluetoothGloves
     private var timer: TrainingTimer? = null
 
-    private var sessionRecorder = TrainingSessionRecorder()
+    private var sessionRecorder =
+        TrainingSessionRecorder()
 
     private var lastLeftPunch: PunchType? = null
     private var lastRightPunch: PunchType? = null
@@ -56,7 +59,9 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
 
         endBtn.setOnClickListener { completeTraining() }
 
-        gloves = BluetoothGloves(address)
+        gloves = BluetoothGloves(
+            address
+        )
 
         if (time == null){
             timeProgressBar.visibility = View.INVISIBLE
@@ -71,7 +76,10 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
 
     private fun completeTraining(){
         val stats = sessionRecorder.createSessionReport()
-        val db = TrainingSessionRepo(context!!)
+        val db =
+            TrainingSessionRepo(
+                context!!
+            )
         db.create(stats)
         fragmentManager?.doTransaction {
             this.replace(
@@ -133,7 +141,8 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
 
     private fun nextCombo(){
         val combo = getNextCombo()
-        comboTracker = ComboTracker(combo)
+        comboTracker =
+            ComboTracker(combo)
         announceNewCombo()
     }
 

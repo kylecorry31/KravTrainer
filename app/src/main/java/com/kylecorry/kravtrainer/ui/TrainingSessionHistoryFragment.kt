@@ -8,9 +8,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.kylecorry.kravtrainer.R
-import com.kylecorry.kravtrainer.domain.models.TrainingSession
-import com.kylecorry.kravtrainer.infrastructure.TrainingSessionRepo
-import com.kylecorry.kravtrainer.toFormattedString
+import com.kylecorry.kravtrainer.domain.training.TrainingSession
+import com.kylecorry.kravtrainer.infrastructure.traininghistory.TrainingSessionRepo
 import java.time.Duration
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -39,7 +38,10 @@ class TrainingSessionHistoryFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        sessionRepo = TrainingSessionRepo(context!!)
+        sessionRepo =
+            TrainingSessionRepo(
+                context!!
+            )
         updateUI(sessionRepo.getAll())
     }
 

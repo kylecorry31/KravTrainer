@@ -10,9 +10,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.kylecorry.kravtrainer.R
-import com.kylecorry.kravtrainer.doTransaction
-import com.kylecorry.kravtrainer.domain.models.*
-import com.kylecorry.kravtrainer.toFormattedString
+import com.kylecorry.kravtrainer.domain.training.TrainingSession
 import kotlin.math.roundToInt
 
 
