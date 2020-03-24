@@ -10,14 +10,11 @@ import com.kylecorry.kravtrainer.domain.training.TrainingSession
 import java.time.Duration
 import java.time.LocalDateTime
 
-class TrainingSessionRepo(ctx: Context) {
-
-    private val db = SessionDBHelper(
-        ctx
-    ).writableDatabase
+class TrainingSessionRepo(private val ctx: Context) {
 
     fun getAll(): List<TrainingSession> {
-        val cursor = query()
+        val db = SessionDBHelper(ctx).readableDatabase
+        val cursor = query(db)
         val stats = mutableListOf<TrainingSession>()
         cursor.use { c ->
             if (c.count == 0){
@@ -29,31 +26,42 @@ class TrainingSessionRepo(ctx: Context) {
                 c.moveToNext()
             }
         }
+        db.close()
         return stats.sortedByDescending { it.date }
     }
 
     fun create(session: TrainingSession){
+        val db = SessionDBHelper(ctx).writableDatabase
         db.insert(TrainingSessionDatabaseConstants.TRAINING_SESSION_TABLE, null, getContentValues(session))
+        db.close()
     }
 
     fun update(session: TrainingSession){
+        val db = SessionDBHelper(ctx).writableDatabase
         val values = getContentValues(session)
         db.update(TrainingSessionDatabaseConstants.TRAINING_SESSION_TABLE, values, "${TrainingSessionDatabaseConstants.TRAINING_SESSION_ID} = ?", arrayOf(session.id.toString()))
+        db.close()
     }
 
     fun delete(session: TrainingSession){
+        val db = SessionDBHelper(ctx).writableDatabase
         db.delete(
             TrainingSessionDatabaseConstants.TRAINING_SESSION_TABLE,
             "${TrainingSessionDatabaseConstants.TRAINING_SESSION_ID} = ?",
             arrayOf(session.id.toString()))
+        db.close()
     }
 
     fun get(id: Int): TrainingSession? {
-        val cursor = query("${TrainingSessionDatabaseConstants.TRAINING_SESSION_ID} = ?", arrayOf(id.toString()))
+        val db = SessionDBHelper(ctx).readableDatabase
+        val cursor = query(db, "${TrainingSessionDatabaseConstants.TRAINING_SESSION_ID} = ?", arrayOf(id.toString()))
         if (cursor.count != 0){
             cursor.moveToFirst()
-            return cursor.getStats()
+            val stats = cursor.getStats()
+            db.close()
+            return stats
         }
+        db.close()
         return null
     }
 
@@ -68,7 +76,7 @@ class TrainingSessionRepo(ctx: Context) {
         return values
     }
 
-    private fun query(where: String? = null, whereArgs: Array<String>? = null, orderBy: String? = null): SessionCursor {
+    private fun query(db: SQLiteDatabase, where: String? = null, whereArgs: Array<String>? = null, orderBy: String? = null): SessionCursor {
         val cursor = db.query(
             TrainingSessionDatabaseConstants.TRAINING_SESSION_TABLE,
             null,
