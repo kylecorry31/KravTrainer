@@ -32,12 +32,4 @@ data class TrainingSession(
 
             return punches / seconds.toFloat()
         }
-
-    fun calories(weightKg: Float): Float {
-        // Formula from https://captaincalculator.com/health/calorie/calories-burned-boxing-calculator/
-        val met = 5f
-        val calPerMin = (met * weightKg * 3.5f) / 200f
-        val minutes = duration.seconds / 60f
-        return calPerMin * minutes
-    }
 }

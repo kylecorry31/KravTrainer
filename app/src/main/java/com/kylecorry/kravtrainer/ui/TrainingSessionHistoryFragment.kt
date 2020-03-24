@@ -90,7 +90,6 @@ class TrainingSessionHistoryFragment : Fragment() {
         var combos = 0
         var duration = Duration.ofSeconds(0)
         var force = 0f
-        var calories = 0f
 
         for (session in sessions){
             incorrect += session.incorrect
@@ -98,7 +97,6 @@ class TrainingSessionHistoryFragment : Fragment() {
             combos += session.combos
             duration = duration.plus(session.duration)
             force = max(force, session.strength)
-            calories += session.calories(76.2f)
         }
 
         force /= SensorManager.GRAVITY_EARTH
@@ -122,8 +120,6 @@ class TrainingSessionHistoryFragment : Fragment() {
         }
 
         chartTitle.text = "Tap a statistic to view history"
-
-        println(calories)
     }
 
     private fun getDailySessions(sessions: List<TrainingSession>): List<TrainingSession> {
