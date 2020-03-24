@@ -29,7 +29,7 @@ class TrainingSessionRepo(ctx: Context) {
                 c.moveToNext()
             }
         }
-        return stats
+        return stats.sortedByDescending { it.date }
     }
 
     fun create(session: TrainingSession){

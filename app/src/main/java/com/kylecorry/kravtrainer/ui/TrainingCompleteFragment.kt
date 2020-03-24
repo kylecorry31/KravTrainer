@@ -26,6 +26,7 @@ class TrainingCompleteFragment(private val session: TrainingSession) : Fragment(
         val numCombosTxt = view.findViewById<TextView>(R.id.num_combos)
         val accuracyTxt = view.findViewById<TextView>(R.id.accuracy)
         val minutesTxt = view.findViewById<TextView>(R.id.minutes)
+        val punchSpeedTxt = view.findViewById<TextView>(R.id.punches_per_second)
         val strengthTxt = view.findViewById<TextView>(R.id.strength)
         val doneBtn = view.findViewById<Button>(R.id.home_btn)
 
@@ -33,6 +34,7 @@ class TrainingCompleteFragment(private val session: TrainingSession) : Fragment(
         numCombosTxt.text = session.combos.toString()
         accuracyTxt.text = "${(session.accuracy * 100).roundToInt()} %"
         minutesTxt.text = session.duration.toFormattedString()
+        punchSpeedTxt.text = String.format("%.1f", session.punchesPerSecond)
         strengthTxt.text = "${(session.strength / SensorManager.GRAVITY_EARTH).roundToInt()}g"
 
         doneBtn.setOnClickListener {

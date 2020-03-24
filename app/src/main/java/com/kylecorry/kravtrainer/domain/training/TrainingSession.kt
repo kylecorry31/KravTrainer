@@ -22,4 +22,14 @@ data class TrainingSession(
             }
             return correct / punches.toFloat()
         }
+
+    val punchesPerSecond: Float
+        get(){
+            val seconds = duration.seconds
+            if (seconds == 0L){
+                return 0f
+            }
+
+            return punches / seconds.toFloat()
+        }
 }

@@ -16,9 +16,12 @@
     <string name="title_train">Train</string>
     <string name="title_training_complete">Training Complete</string>
     <string name="complete_combos">Combos</string>
-    <string name="completed_punches_label">punches</string>
+    <string name="completed_punches_label">Punches</string>
     <string name="completed_minutes">duration</string>
-    <string name="completed_accuracy">accuracy</string>
+    <string name="completed_accuracy">correct</string>
     <string name="home_btn">Finish</string>
     <string name="max_punch_strength">force</string>
+    <string name="punches_per_second">punches/sec</string>
+    <string name="history_chart_duration">Last 30 days</string>
+    <string name="list_separator">-</string>
 </resources>
