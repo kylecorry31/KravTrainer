@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kylecorry.kravtrainer.R
 import com.kylecorry.kravtrainer.domain.training.TrainingSession
+import com.kylecorry.kravtrainer.domain.training.RangedTrainingStatistic
 import com.kylecorry.kravtrainer.infrastructure.traininghistory.TrainingSessionRepo
 import java.time.Duration
 import java.time.LocalDate
@@ -29,9 +30,9 @@ class TrainingSessionHistoryFragment : Fragment() {
     private lateinit var minutesTxt: TextView
     private lateinit var strengthTxt: TextView
     private lateinit var punchSpeedTxt: TextView
-    private lateinit var chart: ILineChart
-    private lateinit var chartTitle: TextView
+    private lateinit var chart: TimeChart
     private lateinit var sessionList: RecyclerView
+    private lateinit var lastSessionDurationTxt: TextView
 
     private lateinit var sessionRepo: TrainingSessionRepo
     private lateinit var adapter: SessionAdapter
@@ -45,9 +46,10 @@ class TrainingSessionHistoryFragment : Fragment() {
         minutesTxt = view.findViewById(R.id.minutes)
         strengthTxt = view.findViewById(R.id.strength)
         punchSpeedTxt = view.findViewById(R.id.punches_per_second)
-        chart = MpLineChart(view.findViewById(R.id.history_chart), resources.getColor(R.color.colorPrimaryDark, null))
-        chartTitle = view.findViewById(R.id.chart_title)
+        chart = TimeChart(view.findViewById(R.id.history_chart), resources.getColor(R.color.colorPrimary, null))
         sessionList = view.findViewById(R.id.session_list)
+        sessionList = view.findViewById(R.id.session_list)
+        lastSessionDurationTxt = view.findViewById(R.id.last_session_duration)
 
         val layoutManager = LinearLayoutManager(context)
 
@@ -70,21 +72,13 @@ class TrainingSessionHistoryFragment : Fragment() {
         val sessions = sessionRepo.getAll()
         val dailySessions = getDailySessions(sessions)
         updateUI(sessions)
-
-        numPunchesTxt.setOnClickListener { updateChart(dailySessions, "Punches", this::getPunchData) }
-        accuracyTxt.setOnClickListener { updateChart(dailySessions, "Accuracy", this::getAccuracyData) }
-        strengthTxt.setOnClickListener { updateChart(dailySessions, "Force", this::getStrengthData) }
-        punchSpeedTxt.setOnClickListener { updateChart(dailySessions, "Punches Per Second", this::getPunchSpeedData) }
-        minutesTxt.setOnClickListener { updateChart(dailySessions, "Duration (minutes)", this::getDurationData) }
-        numCombosTxt.setOnClickListener { updateChart(dailySessions, "Combos", this::getComboData) }
+        updateChart(dailySessions)
 
         adapter = SessionAdapter(sessions.filter { it.punches > 0 })
         sessionList.adapter = adapter
     }
 
     private fun updateUI(sessions: List<TrainingSession>){
-        // TODO: List all sessions
-        // TODO: Display graph of accuracy (or other info) over time
         var incorrect = 0
         var correct = 0
         var combos = 0
@@ -119,7 +113,11 @@ class TrainingSessionHistoryFragment : Fragment() {
             punchSpeedTxt.text = String.format("%.1f", punches / duration.seconds.toFloat())
         }
 
-        chartTitle.text = "Tap a statistic to view history"
+        val lastSession = sessions.firstOrNull { it.punches > 0 }
+
+        if (lastSession != null){
+            lastSessionDurationTxt.text = "${DurationFormatter.format(lastSession.duration)} • ${TimeAgoFormatter.format(lastSession.date)}"
+        }
     }
 
     private fun getDailySessions(sessions: List<TrainingSession>): List<TrainingSession> {
@@ -158,21 +156,28 @@ class TrainingSessionHistoryFragment : Fragment() {
         return dailySessionsList.sortedBy { it.date }
     }
 
-    private fun updateChart(sessions: List<TrainingSession>, title: String, chartDataRetriever: (sessions: List<TrainingSession>) -> List<Pair<LocalDateTime, Number>>){
-        val readings = chartDataRetriever(sessions)
+    private fun updateChart(sessions: List<TrainingSession>){
+        val today = LocalDate.now()
+        val data = mutableListOf<Number>()
 
-        chartTitle.text = title
-
-        val chartData = readings.map {
-            val date = it.first.toZonedDateTime()
-
-            Pair<Number, Number>((date.toEpochSecond() + date.offset.totalSeconds) * 1000,
-                it.second
-            )
+        for (i in 0 until 30){
+            val session = getSession(today.minusDays(i.toLong()), sessions)
+            if (session != null){
+                data.add(session.duration.seconds / 60.0f)
+            } else {
+                data.add(0f)
+            }
         }
 
-        chart.plot(chartData)
+        val week = RangedTrainingStatistic(today.minusDays(6), data.reversed())
+
+        chart.plot(week)
     }
+
+    private fun getSession(date: LocalDate, sessions: List<TrainingSession>): TrainingSession? {
+        return sessions.firstOrNull { it.date.toLocalDate() == date }
+    }
+
 
     // Chart data retrievers
     private fun getAccuracyData(sessions: List<TrainingSession>): List<Pair<LocalDateTime, Number>> {
@@ -212,7 +217,7 @@ class TrainingSessionHistoryFragment : Fragment() {
 
         fun bindToSession(session: TrainingSession){
             timeTxt.text = session.date.format(DateTimeFormatter.ofPattern("MMM dd, yyyy h:mm a"))
-            durationTxt.text = "${(session.duration.seconds / 60f).roundToInt()} min."
+            durationTxt.text = DurationFormatter.format(session.duration)
             accuracyTxt.text = "${(session.accuracy * 100).roundToInt()}% correct"
             combosTxt.text = "${session.combos} combos"
             punchesTxt.text = "${session.punches} punches"
