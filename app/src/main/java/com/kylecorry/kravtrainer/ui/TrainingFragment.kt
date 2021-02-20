@@ -189,7 +189,6 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
     }
 
     fun onGlovesUpdate(){
-        println(gloves.isConnected)
         if (!gloves.isConnected){
             // TODO: Alert user
             Toast.makeText(context, "Gloves disconnected", Toast.LENGTH_LONG).show()

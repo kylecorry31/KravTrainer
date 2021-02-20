@@ -1,6 +1,5 @@
 package com.kylecorry.kravtrainer.infrastructure.gloves
 
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.os.Handler
 import android.os.Looper
@@ -10,8 +9,11 @@ import java.time.Instant
 import java.util.*
 import kotlin.concurrent.thread
 
-class BluetoothSensor(private val device: BluetoothDevice, private val messageHistoryLength: Int):
+class BluetoothSensor(private val address: String, private val messageHistoryLength: Int):
     AbstractSensor(), IBluetoothSensor {
+
+    private val bluetoothService = BluetoothService()
+    private val device by lazy { bluetoothService.getDevice(address) }
 
     override val hasValidReading: Boolean
         get() = messages.isNotEmpty()
@@ -41,7 +43,7 @@ class BluetoothSensor(private val device: BluetoothDevice, private val messageHi
         thread {
             try {
                 socket =
-                    device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))
+                    device?.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))
                 socket?.connect()
                 input = socket?.inputStream
                 output = socket?.outputStream

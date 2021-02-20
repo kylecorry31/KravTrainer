@@ -6,8 +6,8 @@ import com.kylecorry.kravtrainer.domain.classifiers.PunchClassifierFactory
 import com.kylecorry.trailsensecore.infrastructure.sensors.AbstractSensor
 import java.time.Instant
 
-class BluetoothGloves(address: String): AbstractSensor() {
-    private val bluetoothSensor by lazy { BluetoothService().getBluetoothSensor(address, 1) }
+class BluetoothGloves(address: String) : AbstractSensor() {
+    private val bluetoothSensor by lazy { BluetoothSensor(address, 1) }
     private val leftPunchClassifier = PunchClassifierFactory.createPunchClassifier()
     private val rightPunchClassifier = PunchClassifierFactory.createPunchClassifier()
 
@@ -19,26 +19,24 @@ class BluetoothGloves(address: String): AbstractSensor() {
     private var lastMessageTime = Instant.MIN
 
     val isConnected: Boolean
-        get() = bluetoothSensor?.isConnected == true
+        get() = bluetoothSensor.isConnected
 
     override val hasValidReading: Boolean
-        get() = bluetoothSensor?.hasValidReading == true
+        get() = bluetoothSensor.hasValidReading
 
     override fun startImpl() {
-        bluetoothSensor?.start(this::onBluetooth)
+        bluetoothSensor.start(this::onBluetooth)
     }
 
     override fun stopImpl() {
-        bluetoothSensor?.stop(this::onBluetooth)
+        bluetoothSensor.stop(this::onBluetooth)
     }
 
     private fun onBluetooth(): Boolean {
-        bluetoothSensor?.let {
-            val lastMessage = it.messages.lastOrNull()
-            if (lastMessage != null && lastMessage.timestamp > lastMessageTime){
-                lastMessageTime = lastMessage.timestamp
-                onData(lastMessage.message)
-            }
+        val lastMessage = bluetoothSensor.messages.lastOrNull()
+        if (lastMessage != null && lastMessage.timestamp > lastMessageTime) {
+            lastMessageTime = lastMessage.timestamp
+            onData(lastMessage.message)
         }
         return true
     }
@@ -47,7 +45,7 @@ class BluetoothGloves(address: String): AbstractSensor() {
     private fun onData(data: String) {
         val strValues = data.split(",")
 
-        if (strValues.size != 4 || strValues.any { it.isEmpty() }){
+        if (strValues.size != 4 || strValues.any { it.isEmpty() }) {
             return
         }
 
@@ -55,7 +53,7 @@ class BluetoothGloves(address: String): AbstractSensor() {
 
         val acceleration = Acceleration(values[1], values[2], values[3])
 
-        if (values[0] == 0f){
+        if (values[0] == 0f) {
             left = leftPunchClassifier.classify(acceleration)
             leftStrength = acceleration.magnitude()
         } else {

@@ -13,17 +13,12 @@ class BluetoothService {
     val devices: List<BluetoothDevice>
         get() = adapter.bondedDevices.toList()
 
-    private fun getDevice(address: String): BluetoothDevice? {
+    fun getDevice(address: String): BluetoothDevice? {
         return try {
             adapter.getRemoteDevice(address)
         } catch (e: Exception){
             null
         }
-    }
-
-    fun getBluetoothSensor(address: String, messageHistorySize: Int = 1): BluetoothSensor? {
-        val device = getDevice(address) ?: return null
-        return BluetoothSensor(device, messageHistorySize)
     }
 
 }
