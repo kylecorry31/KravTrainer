@@ -3,64 +3,48 @@ package com.kylecorry.kravtrainer.infrastructure.gloves
 import com.kylecorry.kravtrainer.domain.punches.Acceleration
 import com.kylecorry.kravtrainer.domain.punches.PunchType
 import com.kylecorry.kravtrainer.domain.classifiers.PunchClassifierFactory
-import java.util.*
+import com.kylecorry.trailsensecore.infrastructure.sensors.AbstractSensor
+import java.time.Instant
 
-class BluetoothGloves(address: String): Observable(),
-    SerialListener {
-
-    private val serial =
-        BluetoothSerial(address)
+class BluetoothGloves(address: String): AbstractSensor() {
+    private val bluetoothSensor by lazy { BluetoothService().getBluetoothSensor(address, 1) }
     private val leftPunchClassifier = PunchClassifierFactory.createPunchClassifier()
     private val rightPunchClassifier = PunchClassifierFactory.createPunchClassifier()
 
     var left: PunchType? = null
-        private set(value) {
-            setChanged()
-            notifyObservers()
-            field = value
-        }
-
     var right: PunchType? = null
-        private set(value){
-            setChanged()
-            notifyObservers()
-            field = value
-        }
-
     var leftStrength: Float = 0f
-        private set(value){
-            setChanged()
-            notifyObservers()
-            field = value
-        }
-
     var rightStrength: Float = 0f
-        private set(value){
-            setChanged()
-            notifyObservers()
-            field = value
-        }
+
+    private var lastMessageTime = Instant.MIN
 
     val isConnected: Boolean
-        get() = serial.isConnected
+        get() = bluetoothSensor?.isConnected == true
 
-    private var started = false
+    override val hasValidReading: Boolean
+        get() = bluetoothSensor?.hasValidReading == true
 
-    fun start(){
-        if (started) return
-        started = true
-        serial.registerListener(this)
-        serial.connect()
+    override fun startImpl() {
+        bluetoothSensor?.start(this::onBluetooth)
     }
 
-    fun stop(){
-        if (!started) return
-        started = false
-        serial.disconnect()
-        serial.unregisterListener(this)
+    override fun stopImpl() {
+        bluetoothSensor?.stop(this::onBluetooth)
     }
 
-    override fun onData(data: String) {
+    private fun onBluetooth(): Boolean {
+        bluetoothSensor?.let {
+            val lastMessage = it.messages.lastOrNull()
+            if (lastMessage != null && lastMessage.timestamp > lastMessageTime){
+                lastMessageTime = lastMessage.timestamp
+                onData(lastMessage.message)
+            }
+        }
+        return true
+    }
+
+
+    private fun onData(data: String) {
         val strValues = data.split(",")
 
         if (strValues.size != 4 || strValues.any { it.isEmpty() }){
@@ -79,17 +63,6 @@ class BluetoothGloves(address: String): Observable(),
             rightStrength = acceleration.magnitude()
         }
 
+        notifyListeners()
     }
-
-    override fun onConnect() {
-        setChanged()
-        notifyObservers()
-    }
-
-    override fun onDisconnect() {
-        setChanged()
-        notifyObservers()
-    }
-
-
 }

@@ -65,10 +65,7 @@ class TrainingSessionHistoryFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        sessionRepo =
-            TrainingSessionRepo(
-                context!!
-            )
+        sessionRepo = TrainingSessionRepo(requireContext())
         val sessions = sessionRepo.getAll()
         val dailySessions = getDailySessions(sessions)
         updateUI(sessions)

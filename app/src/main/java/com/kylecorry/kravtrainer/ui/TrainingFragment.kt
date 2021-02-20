@@ -20,6 +20,7 @@ import com.kylecorry.kravtrainer.domain.training.TrainingSessionRecorder
 import com.kylecorry.kravtrainer.infrastructure.gloves.BluetoothGloves
 import com.kylecorry.kravtrainer.infrastructure.traininghistory.TrainingSessionRepo
 import com.kylecorry.kravtrainer.domain.training.TrainingTimer
+import com.kylecorry.trailsensecore.infrastructure.sensors.asLiveData
 import java.util.*
 import kotlin.concurrent.timerTask
 import kotlin.random.Random
@@ -59,9 +60,7 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
 
         endBtn.setOnClickListener { completeTraining() }
 
-        gloves = BluetoothGloves(
-            address
-        )
+        gloves = BluetoothGloves(address)
 
         if (time == null){
             timeProgressBar.visibility = View.INVISIBLE
@@ -71,15 +70,14 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
             timer = TrainingTimer(time)
         }
 
+        gloves.asLiveData().observe(viewLifecycleOwner, { onGlovesUpdate() })
+
         return view
     }
 
     private fun completeTraining(){
         val stats = sessionRecorder.createSessionReport()
-        val db =
-            TrainingSessionRepo(
-                context!!
-            )
+        val db = TrainingSessionRepo(requireContext())
         db.create(stats)
         fragmentManager?.doTransaction {
             this.replace(
@@ -93,10 +91,7 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
         super.onResume()
         tts = TextToSpeech(context, this)
 
-        gloves.start()
         timer?.start()
-
-        gloves.addObserver(this)
         timer?.addObserver(this)
 
         handler = Handler(Looper.getMainLooper())
@@ -106,21 +101,17 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
         super.onPause()
 
         timer?.deleteObserver(this)
-        gloves.deleteObserver(this)
 
         timer?.stop()
         if (tts.isSpeaking){
             tts.stop()
         }
         tts.shutdown()
-        gloves.stop()
 
         mediaPlayer?.release()
     }
 
     private fun onPunch(punch: Punch){
-        println(punch)
-
         if (comboTracker.matches(punch)){
             sessionRecorder.correct()
             playSound(R.raw.success)
@@ -198,6 +189,7 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
     }
 
     fun onGlovesUpdate(){
+        println(gloves.isConnected)
         if (!gloves.isConnected){
             // TODO: Alert user
             Toast.makeText(context, "Gloves disconnected", Toast.LENGTH_LONG).show()
@@ -237,7 +229,6 @@ class TrainingFragment(private val time: Int?, private val address: String) : Fr
     }
 
     override fun update(o: Observable?, arg: Any?) {
-        if (o == gloves) onGlovesUpdate()
         if (o == timer) onTimerUpdate()
     }
 }

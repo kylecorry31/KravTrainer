@@ -11,7 +11,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.kylecorry.kravtrainer.R
-import com.kylecorry.kravtrainer.infrastructure.gloves.Bluetooth
+import com.kylecorry.kravtrainer.infrastructure.gloves.BluetoothService
 
 
 class TrainingSelectFragment : Fragment() {
@@ -49,12 +49,12 @@ class TrainingSelectFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (!Bluetooth.isEnabled){
+        if (!BluetoothService().isEnabled){
             Toast.makeText(context, "Bluetooth is disabled, please enable it to train.", Toast.LENGTH_LONG).show()
         }
 
         // TODO: Allow user to override this
-        val hc05 = Bluetooth.devices.firstOrNull { it.name == "HC-05" }
+        val hc05 = BluetoothService().devices.firstOrNull { it.name == "HC-05" }
 
         if (hc05 != null){
             address = hc05.address
