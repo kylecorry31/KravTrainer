@@ -1,7 +1,7 @@
 package com.kylecorry.kravtrainer.domain.classifiers
 
-import com.kylecorry.kravtrainer.domain.punches.Acceleration
 import com.kylecorry.kravtrainer.domain.punches.PunchType
+import com.kylecorry.trailsensecore.domain.math.Vector3
 import java.lang.StringBuilder
 
 class OrderPunchClassifier(private val threshold: Float): WindowedPunchClassifier(15) {
@@ -11,7 +11,7 @@ class OrderPunchClassifier(private val threshold: Float): WindowedPunchClassifie
         Pair(PunchType.Hook, listOf("Xy", "Xz"))//,"Xzy", "XYzy" /**Uppercut**/"yzxZ", "ZXy")) // XzxyZy, XzxyZ
     )
 
-    override fun classify(reading: Acceleration): PunchType? {
+    override fun classify(reading: Vector3): PunchType? {
         super.classify(reading)
 
         if (!isWindowFull()){
@@ -32,7 +32,7 @@ class OrderPunchClassifier(private val threshold: Float): WindowedPunchClassifie
     }
 
 
-    private fun getSequence(readings: List<Acceleration>): String {
+    private fun getSequence(readings: List<Vector3>): String {
 
         var lastX = readings[0].x
         var lastY = readings[0].y

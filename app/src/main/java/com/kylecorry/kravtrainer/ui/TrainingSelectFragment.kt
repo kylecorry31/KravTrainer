@@ -11,7 +11,8 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.kylecorry.kravtrainer.R
-import com.kylecorry.kravtrainer.infrastructure.gloves.BluetoothService
+import com.kylecorry.trailsensecore.infrastructure.sensors.bluetooth.BluetoothService
+import com.kylecorry.trailsensecore.infrastructure.system.UiUtils
 
 
 class TrainingSelectFragment : Fragment() {
@@ -20,9 +21,14 @@ class TrainingSelectFragment : Fragment() {
     private lateinit var fourMinBtn: Button
     private lateinit var unlimitedBtn: Button
 
-    private var address = ""
+    private var leftAddress = ""
+    private var rightAddress = ""
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_training_select, container, false)
         twoMinBtn = view.findViewById(R.id.button_2_minutes)
         fourMinBtn = view.findViewById(R.id.button_4_minutes)
@@ -30,56 +36,62 @@ class TrainingSelectFragment : Fragment() {
         unlimitedBtn = view.findViewById(R.id.button_unlimited)
 
         twoMinBtn.setOnClickListener {
-            startTraining(60 * 2, address)
+            startTraining(60 * 2, leftAddress, rightAddress)
         }
 
         fourMinBtn.setOnClickListener {
-            startTraining(60 * 4, address)
+            startTraining(60 * 4, leftAddress, rightAddress)
         }
 
         tenMinBtn.setOnClickListener {
-            startTraining(60 * 10, address)
+            startTraining(60 * 10, leftAddress, rightAddress)
         }
 
         unlimitedBtn.setOnClickListener {
-            startTraining(null, address)
+            startTraining(null, leftAddress, rightAddress)
         }
         return view
     }
 
     override fun onResume() {
         super.onResume()
-        if (!BluetoothService().isEnabled){
-            Toast.makeText(context, "Bluetooth is disabled, please enable it to train.", Toast.LENGTH_LONG).show()
+        val bluetoothService = BluetoothService(requireContext())
+
+        if (!bluetoothService.isEnabled) {
+            Toast.makeText(
+                context,
+                "Bluetooth is disabled, please enable it to train.",
+                Toast.LENGTH_LONG
+            ).show()
+            return
         }
 
-        // TODO: Allow user to override this
-        val hc05 = BluetoothService().devices.firstOrNull { it.name == "HC-05" }
+        val left = bluetoothService.devices.firstOrNull { it.name == "SHADOW-BOXER-LEFT" }?.address
+        val right =
+            bluetoothService.devices.firstOrNull { it.name == "SHADOW-BOXER-RIGHT" }?.address
 
-        if (hc05 != null){
-            address = hc05.address
-        } else {
-            val dialog = activity?.let {
-                val builder = AlertDialog.Builder(it)
-                builder.apply {
-                    setTitle("Shadow boxer gloves not paired")
-                    setMessage("Set the gloves to pairing mode then connect to 'HC-05' from your Bluetooth settings. The pin is 1234.")
-                    setPositiveButton("Open settings") { _, _ ->
-                        val bluetoothIntent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
-                        startActivity(bluetoothIntent)
-                    }
-                }
-                builder.create()
+        if (left == null || right == null) {
+            UiUtils.alert(
+                requireContext(),
+                "Shadow boxer gloves not paired",
+                "Set the gloves to pairing mode then connect to them from your Bluetooth settings. The pin is 1234.",
+                "Open Settings"
+            ) {
+                val bluetoothIntent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
+                startActivity(bluetoothIntent)
             }
-            dialog?.show()
+        } else {
+            leftAddress = left
+            rightAddress = right
         }
+
     }
 
-    private fun startTraining(time: Int?, address: String){
+    private fun startTraining(time: Int?, leftAddress: String, rightAddress: String) {
         fragmentManager?.doTransaction {
             this.replace(
                 R.id.fragment_holder,
-                TrainingFragment(time, address)
+                TrainingFragment(time, leftAddress, rightAddress)
             )
         }
     }

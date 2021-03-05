@@ -1,66 +1,49 @@
 package com.kylecorry.kravtrainer.infrastructure.gloves
 
-import com.kylecorry.kravtrainer.domain.punches.Acceleration
+import android.content.Context
 import com.kylecorry.kravtrainer.domain.punches.PunchType
-import com.kylecorry.kravtrainer.domain.classifiers.PunchClassifierFactory
 import com.kylecorry.trailsensecore.infrastructure.sensors.AbstractSensor
-import java.time.Instant
 
-class BluetoothGloves(address: String) : AbstractSensor() {
-    private val bluetoothSensor by lazy { BluetoothSensor(address, 1) }
-    private val leftPunchClassifier = PunchClassifierFactory.createPunchClassifier()
-    private val rightPunchClassifier = PunchClassifierFactory.createPunchClassifier()
+class BluetoothGloves(
+    private val context: Context,
+    private val leftAddress: String,
+    private val rightAddress: String
+) : AbstractSensor() {
+    private val leftGlove by lazy { BluetoothGlove(context, leftAddress) }
+    private val rightGlove by lazy { BluetoothGlove(context, rightAddress) }
 
     var left: PunchType? = null
     var right: PunchType? = null
     var leftStrength: Float = 0f
     var rightStrength: Float = 0f
 
-    private var lastMessageTime = Instant.MIN
-
     val isConnected: Boolean
-        get() = bluetoothSensor.isConnected
+        get() = leftGlove.isConnected && rightGlove.isConnected
 
     override val hasValidReading: Boolean
-        get() = bluetoothSensor.hasValidReading
+        get() = leftGlove.hasValidReading || rightGlove.hasValidReading
 
     override fun startImpl() {
-        bluetoothSensor.start(this::onBluetooth)
+        leftGlove.start(this::onLeft)
+        rightGlove.start(this::onRight)
     }
 
     override fun stopImpl() {
-        bluetoothSensor.stop(this::onBluetooth)
+        leftGlove.stop(this::onLeft)
+        rightGlove.stop(this::onRight)
     }
 
-    private fun onBluetooth(): Boolean {
-        val lastMessage = bluetoothSensor.messages.lastOrNull()
-        if (lastMessage != null && lastMessage.timestamp > lastMessageTime) {
-            lastMessageTime = lastMessage.timestamp
-            onData(lastMessage.message)
-        }
+    private fun onLeft(): Boolean {
+        left = leftGlove.punch
+        leftStrength = leftGlove.strength
+        notifyListeners()
         return true
     }
 
-
-    private fun onData(data: String) {
-        val strValues = data.split(",")
-
-        if (strValues.size != 4 || strValues.any { it.isEmpty() }) {
-            return
-        }
-
-        val values = strValues.map { it.toFloat() }
-
-        val acceleration = Acceleration(values[1], values[2], values[3])
-
-        if (values[0] == 0f) {
-            left = leftPunchClassifier.classify(acceleration)
-            leftStrength = acceleration.magnitude()
-        } else {
-            right = rightPunchClassifier.classify(acceleration)
-            rightStrength = acceleration.magnitude()
-        }
-
+    private fun onRight(): Boolean {
+        right = rightGlove.punch
+        rightStrength = rightGlove.strength
         notifyListeners()
+        return true
     }
 }
