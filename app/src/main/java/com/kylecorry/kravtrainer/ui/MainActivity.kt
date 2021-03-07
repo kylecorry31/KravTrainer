@@ -20,6 +20,10 @@ class MainActivity : AppCompatActivity() {
         Pair(
             R.id.action_stats,
             TrainingSessionHistoryFragment()
+        ),
+        Pair(
+            R.id.action_graph,
+            AccelerationFragment()
         )
     )
 

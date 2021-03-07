@@ -5,7 +5,7 @@ import com.kylecorry.kravtrainer.domain.classifiers.PunchClassifierFactory
 import com.kylecorry.kravtrainer.domain.punches.PunchType
 import com.kylecorry.trailsensecore.infrastructure.sensors.AbstractSensor
 
-class BluetoothGlove(private val context: Context, private val address: String): AbstractSensor() {
+class BluetoothGlove(private val context: Context, private val address: String, private val invertX: Boolean = false): AbstractSensor() {
 
     private val accelerometer by lazy { BluetoothAccelerometer(context, address) }
     private val punchClassifier = PunchClassifierFactory.createPunchClassifier()
@@ -29,7 +29,7 @@ class BluetoothGlove(private val context: Context, private val address: String):
 
     private fun onReading(): Boolean {
         val acceleration = accelerometer.acceleration
-        punch = punchClassifier.classify(acceleration)
+        punch = punchClassifier.classify(acceleration.copy(x = if (invertX) -acceleration.x else acceleration.x))
         strength = acceleration.magnitude()
         notifyListeners()
         return true

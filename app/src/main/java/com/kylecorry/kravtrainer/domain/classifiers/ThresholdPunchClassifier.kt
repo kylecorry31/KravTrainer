@@ -8,11 +8,10 @@ class ThresholdPunchClassifier: IPunchClassifier {
     private val antiDuplication = AntiDuplicationFilter(400L)
     private val hookThreshold = 35
     private val straightThreshold = 25
-    private val initialThreshold = 15
 
     override fun classify(reading: Vector3): PunchType? {
 
-        if ((reading.z < -hookThreshold || reading.x < -hookThreshold) && reading.y < initialThreshold){
+        if (reading.x > hookThreshold){
             return antiDuplication.filter(PunchType.Hook)
         }
 

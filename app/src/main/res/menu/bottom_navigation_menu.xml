@@ -15,5 +15,11 @@
         android:icon="@drawable/ic_stats"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_graph"
+        android:title="Debug"
+        android:icon="@drawable/ic_baseline_bug_report_24"
+        app:showAsAction="ifRoom" />
+
 
 </menu>

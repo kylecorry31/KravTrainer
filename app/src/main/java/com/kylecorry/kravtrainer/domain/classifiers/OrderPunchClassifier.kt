@@ -7,8 +7,8 @@ import java.lang.StringBuilder
 class OrderPunchClassifier(private val threshold: Float): WindowedPunchClassifier(15) {
 
     private val punchSequences = mapOf(
-        Pair(PunchType.Straight, listOf("Xx")), // , "Xzx", "XzYx", "XYzx"
-        Pair(PunchType.Hook, listOf("Xy", "Xz"))//,"Xzy", "XYzy" /**Uppercut**/"yzxZ", "ZXy")) // XzxyZy, XzxyZ
+        Pair(PunchType.Straight, listOf("Yy")), // , "Xzx", "XzYx", "XYzx"
+        Pair(PunchType.Hook, listOf("xy"))//,"Xzy", "XYzy" /**Uppercut**/"yzxZ", "ZXy")) // XzxyZy, XzxyZ
     )
 
     override fun classify(reading: Vector3): PunchType? {

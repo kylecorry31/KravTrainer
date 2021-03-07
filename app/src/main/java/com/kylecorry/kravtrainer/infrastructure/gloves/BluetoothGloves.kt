@@ -10,7 +10,7 @@ class BluetoothGloves(
     private val rightAddress: String
 ) : AbstractSensor() {
     private val leftGlove by lazy { BluetoothGlove(context, leftAddress) }
-    private val rightGlove by lazy { BluetoothGlove(context, rightAddress) }
+    private val rightGlove by lazy { BluetoothGlove(context, rightAddress, true) }
 
     var left: PunchType? = null
     var right: PunchType? = null
